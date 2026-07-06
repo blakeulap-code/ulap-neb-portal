@@ -94,14 +94,6 @@
   .masthead-spacer { flex: 1; }
 
   .role-switch { display: flex; align-items: center; gap: 10px; }
-  .whoami {
-    background: rgba(255,255,255,.06); color: #EAF0FA; border: 1px solid rgba(196,160,82,.35);
-    border-radius: 7px; padding: 8px 13px; font-size: 12.5px; font-family: inherit; font-weight: 600;
-    max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: .15s;
-  }
-  .whoami:hover { border-color: var(--gold); background: rgba(196,160,82,.14); }
-  .whoami .pen { color: var(--gold-bright); margin-right: 6px; }
-  .whoami .lbl { color: #9FB2D4; font-weight: 600; }
   .role-toggle { display: inline-flex; background: rgba(0,0,0,.22); border-radius: 8px; padding: 3px; border: 1px solid rgba(255,255,255,.10); }
   .role-toggle button {
     border: 0; background: transparent; color: #A9B8D6; padding: 7px 12px; border-radius: 6px;
@@ -284,6 +276,8 @@
   .draft-doc .lead { font-size: 14.5px; color: var(--navy-ink); font-style: normal; font-weight: 600; line-height: 1.4; }
   .draft-doc .lead .lead-sub { font-weight: 400; font-size: 12.5px; color: var(--muted); }
   .draft-note { margin-top: 22px; padding: 13px 16px; background: var(--warn-soft); border: 1px solid #efd6ad; border-radius: 8px; font-size: 13px; color: #7a531a; line-height: 1.5; }
+  .confid-banner { margin-bottom: 16px; padding: 10px 14px; background: var(--bad-soft); border: 1px solid #e9c3c3; border-left: 3px solid var(--bad); border-radius: 6px; font-size: 12.5px; color: #7a2a2a; line-height: 1.5; }
+  .confid-banner strong { color: var(--bad); }
   .draft-note.ok { background: var(--good-soft); border-color: #bfe0cc; color: #1a6b3c; }
   .draft-actions { display: flex; gap: 10px; margin: 2px 0 22px; flex-wrap: wrap; }
   .draft-actions .btn svg { width: 15px; height: 15px; }
@@ -374,19 +368,19 @@
   .thresh-note.met { color: var(--good); font-weight: 600; }
 
   .rc-list { display: flex; flex-direction: column; max-height: 380px; overflow-y: auto; }
-  .rc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--hair); }
+  .rc-row { display: flex; flex-direction: column; gap: 5px; padding: 10px 16px; border-bottom: 1px solid var(--hair); }
   .rc-row:last-child { border-bottom: 0; }
-  .rc-person { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-  .rc-name { font-size: 12.5px; color: var(--ink); font-weight: 700; line-height: 1.2; }
-  .rc-title { font-size: 11px; color: var(--muted); }
-  .rc-time { font-size: 10px; color: var(--muted-2); margin-top: 1px; }
-  .rc-right { display: flex; align-items: center; gap: 8px; flex: none; }
-  .rc-sig { height: 26px; width: auto; max-width: 76px; object-fit: contain; opacity: .9; }
-  .rc-status { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .2px; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+  .rc-line1 { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .rc-line2 { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .rc-name { flex: 1 1 auto; min-width: 0; font-size: 12.5px; color: var(--ink); font-weight: 700; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rc-sub { flex: 1 1 auto; min-width: 0; font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rc-right { display: flex; align-items: center; gap: 6px; flex: none; }
+  .rc-sig { height: 22px; width: auto; max-width: 64px; object-fit: contain; opacity: .9; }
+  .rc-status { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .2px; padding: 3px 8px; border-radius: 20px; white-space: nowrap; flex: none; }
   .rc-status svg { width: 11px; height: 11px; }
   .rc-approve { background: var(--good-soft); color: var(--good); }
   .rc-disapprove { background: var(--bad-soft); color: var(--bad); }
-  .rc-del { border: 0; background: transparent; color: var(--muted-2); font-size: 16px; line-height: 1; padding: 2px 5px; border-radius: 4px; }
+  .rc-del { border: 0; background: transparent; color: var(--muted-2); font-size: 16px; line-height: 1; padding: 2px 5px; border-radius: 4px; flex: none; }
   .rc-del:hover { background: var(--bad-soft); color: var(--bad); }
   .rc-empty { padding: 20px 16px; font-size: 12.5px; color: var(--muted); line-height: 1.55; }
 
@@ -513,7 +507,6 @@
       </div>
       <div class="masthead-spacer"></div>
       <div class="role-switch">
-        <button class="whoami" id="whoami" title="The name you sign off with">Set your name</button>
         <div class="role-toggle" role="tablist" aria-label="Switch role">
           <button id="roleNeb" class="on" role="tab">NEB Member</button>
           <button id="roleSec" role="tab">Secretariat</button>
@@ -747,6 +740,754 @@
   // ---------- seed papers ----------
   var SEED = [
     {
+      "id": "pp-2026-0001",
+      "ref": "HB 1613 +3",
+      "measure": "HB 1613, HB 6948, HB 7902, HB 8353 / National Coastal Greenbelt Program",
+      "title": "National Coastal Greenbelt Program",
+      "area": "Environment and natural resources",
+      "sender": "House Committee on Climate Change",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "House Committee on Climate Change requested ULAP's position paper on the proposed National Coastal Greenbelt Program and asked whether the measure should be harmonized with the Integrated Coastal Management framework; key LGU issues include land-use coordination, local autonomy, financing, and site-specific implementation.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support with safeguards; integrate with ICM and preserve LGU land-use authority, participation, and national funding support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0002",
+      "ref": "PP-2026-0002",
+      "measure": "Working Draft Bill on the Creation of the Department of Fisheries and Aquatic Resources",
+      "title": "Department of Fisheries and Aquatic Resources Bill",
+      "area": "Agriculture and food security",
+      "sender": "House Committee on Aquaculture and Fisheries Resources",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "House Committee on Aquaculture and Fisheries Resources requested comments on the DFAR working draft; the current draft strengthens national fisheries governance but includes provisions that may recentralize municipal waters regulation and require stronger LGU safeguards.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support in principle subject to fundamental amendments preserving LGU jurisdiction over municipal waters and providing national support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0003",
+      "ref": "RA 7916, RA 8748",
+      "measure": "Proposed Amendments to RA No. 7916, as amended by RA No. 8748",
+      "title": "Proposed Amendments to RA No. 7916, as Amended by RA No. 8748",
+      "area": "Local governance",
+      "sender": "PEZA Legal Affairs Group",
+      "senderType": "National Government Agency",
+      "office": "Philippine Economic Zone Authority",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "oppose",
+      "summary": "PEZA transmitted draft amendments to its charter and sought ULAP support; the proposed changes expand PEZA powers over ecozone designation, permitting, and utilities, with potential impacts on LGU land-use, regulatory, and fiscal authority.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Cannot support in present form; substantially revise to preserve LGU land-use, permitting, and fiscal authority while streamlining coordination.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0004",
+      "ref": "HB 8466, SB 152",
+      "measure": "House Bill No. 8466 and Senate Bill No. 152 / Proposed National Land Use Act",
+      "title": "Proposed National Land Use Act",
+      "area": "Local governance",
+      "sender": "Presidential Legislative Liaison Office",
+      "senderType": "National Government Agency",
+      "office": "Presidential Legislative Liaison Office",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "PLLO’s 05 May 2026 referral requested ULAP’s observations or recommendations on House Bill No. 8466 and Senate Bill No. 152 at the soonest possible time. Building on the earlier April NLUA intake, key LGU issues remain preservation of local planning and zoning authority, time-bound harmonization review, structured LGU consultation, and national technical and fiscal support.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support enactment with safeguards: preserve LGU authority over local land use and zoning, keep higher-level review harmonizing and time-bound, require LGU consultation, and pair new duties with national support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0005",
+      "ref": "EO 66",
+      "measure": "Draft amendment to EO No. 66, s. 2012 / Rules on the Cancellation or Suspension of Classes and Work in Government Offices Due to Typhoons, Flooding, and Other Natural or Human-Induced Hazards and Disasters",
+      "title": "Rules on the Cancellation or Suspension of Classes and Work in Government Offices Due to Typhoons, Flooding, and Other Natural or Human-induced Hazards and Disasters",
+      "area": "Education and disaster risk reduction",
+      "sender": "Office of the Secretary",
+      "senderType": "National Government Agency",
+      "office": "Department of Education",
+      "priority": "Urgent (≤2 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "DepEd requested ULAP's final comments on the proposed amendments to EO No. 66, s. 2012 and asked that submissions be made through the attached form by 22 April 2026. Key LGU issues include preserving self-executing local suspension authority, clarifying the heat-index trigger, ensuring direct advisory relay to LDRRMCs, and preventing unfunded ADM obligations.",
+      "requestedAction": "Prepare position paper / submit final comments",
+      "recommendation": "Support with substantial safeguards; preserve self-executing LGU suspension authority, require direct national-to-local advisory relay, clarify the heat-index trigger, and prevent unfunded ADM obligations.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0006",
+      "ref": "SB 1506, HB 6235",
+      "measure": "CADENA Act / Senate Bill No. 1506 / House Bill Nos. 6235, 6792, 6898, 6903, 7450, 7461, 7712",
+      "title": "CADENA Act",
+      "area": "Digital governance",
+      "sender": "ULAP Secretariat",
+      "senderType": "Other",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Routine (>7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "ULAP Secretariat circulated the draft ULAP position paper on the CADENA Act and requested approval, inputs, or comments from the NEB and member leagues. The draft generally supports transparency and accountability objectives, subject to interoperable digital systems, phased LGU compliance, standardized reporting templates, national funding support, and calibrated sanctions tied to actual local readiness.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with safeguards; require interoperable and funded national disclosure systems, phased LGU compliance, standardized templates, and calibrated sanctions tied to real local capacity and readiness.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0007",
+      "ref": "RA 11310",
+      "measure": "Proposed amendments to Republic Act No. 11310 / 4Ps Act Amendments",
+      "title": "Proposed Amendments to Republic Act No. 11310",
+      "area": "Social protection",
+      "sender": "ULAP Secretariat",
+      "senderType": "Other",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Routine (>7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "ULAP Secretariat circulated the draft ULAP position on proposed 4Ps Act amendments and requested approval, inputs, or comments from the NEB and member leagues. Key LGU issues include clear delineation of DSWD and LGU roles, validated local inputs into beneficiary records, due-process safeguards for suspension, delisting, and graduation, privacy-protected data-sharing, transition planning, and operational support for local participation.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with safeguards; clearly define LGU roles in beneficiary management and convergence, provide lawful data-sharing and due-process protections, link graduation to transition support, and avoid unfunded local mandates.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0008",
+      "ref": "PP-2026-0008",
+      "measure": "Proposed Performance Indicators for Sustainable Education / SGLG 2026-2028 indicator framework",
+      "title": "SGLG 2026-2028 Indicator Framework",
+      "area": "Education",
+      "sender": "Office of the Assistant Secretary for Operations",
+      "senderType": "National Government Agency",
+      "office": "Department of Education",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "DepEd requested comments and recommendations on the proposed SGLG Sustainable Education indicator framework. Key ULAP issues include keeping the framework fair to different LGU capacities, distinguishing LGU-attributable actions from broader education outcomes, and avoiding duplicative reporting burdens.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with safeguards; use outcome indicators contextually, profile new measures first, and avoid unfunded or duplicative reporting burdens on LGUs.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0009",
+      "ref": "HB 1110",
+      "measure": "Substitute Bill to House Bills 1110, 2373, 2852, 5790, 6067, 6129, 6145, 7811, and 8069 / Seal of Meritocracy and Good Local Governance Bill",
+      "title": "Seal of Meritocracy and Good Local Governance Bill",
+      "area": "Local governance",
+      "sender": "House Committee on Appropriations",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "The House Committee on Appropriations forwarded a referral letter and substitute bill on the proposed Seal of Meritocracy and Good Local Governance measure. Key ULAP issues include preserving local autonomy, recalibrating the data-collection burden, and clarifying incentives, disincentives, and intervention mechanisms.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support subject to substantial amendments preserving local autonomy, calibrating data burdens, and clarifying incentives, disincentives, and intervention mechanisms.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0010",
+      "ref": "SBN 21 +3",
+      "measure": "SBN 21, SBN 534, SBN 1918, and SRN 345 / Senate Health and Demography hearing on vape and heated tobacco regulation measures",
+      "title": "Vape and Heated Tobacco Regulation Measures",
+      "area": "Health",
+      "sender": "Senate Committee on Health and Demography",
+      "senderType": "Congress / Senate",
+      "office": "Senate of the Philippines",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "The Senate Committee on Health and Demography circulated hearing materials on pending vape and heated-tobacco measures. Key ULAP issues include stronger youth protection, a clear DOH/FDA-led regulatory framework, preservation of LGU authority to adopt stricter local safeguards, and avoidance of unfunded or unclear local enforcement burdens.",
+      "requestedAction": "Attend hearing and submit statement",
+      "recommendation": "Support stronger vape and heated-tobacco regulation with safeguards: keep regulation health-centered, preserve LGU authority to impose stricter local measures, and avoid unfunded or unclear local enforcement burdens.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0011",
+      "ref": "SB 156",
+      "measure": "Proposed Right to Information Act / Senate Bill Nos. 156, 1625, 1648 and related House measures",
+      "title": "PEAS Bills and EMB Strengthening",
+      "area": "Digital governance",
+      "sender": "ULAP Secretariat",
+      "senderType": "ULAP Secretariat - approval/input circulation",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "ULAP circulated a draft position paper supporting a Right to Information law with safeguards on privacy, exceptions, records management, and realistic LGU implementation capacity. Key ULAP issues include workable local compliance, clear exceptions, and national support for records and digital systems.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with safeguards: broaden public access while protecting privacy, clarifying exceptions, and ensuring realistic, funded LGU implementation.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0012",
+      "ref": "SB 1457, RA 11524",
+      "measure": "Coconut Farmers Trust Fund Amendments / Senate Bill No. 1457 and related measures amending Republic Act No. 11524",
+      "title": "Coconut Farmers Trust Fund Amendments",
+      "area": "Agriculture and food security",
+      "sender": "ULAP Secretariat",
+      "senderType": "ULAP Secretariat - approval/input circulation",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "ULAP circulated a draft position supporting amendments to the Coconut Farmers Trust Fund framework. Key ULAP issues include structured LGU participation, joint registry validation, convergence with local agriculture investments, and funded local delivery support.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support amendments that strengthen farmer participation and local delivery, subject to clear LGU roles, better registry validation, and funded implementation support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0013",
+      "ref": "RA 11037",
+      "measure": "Masustansyang Pagkain Act Amendments / Senate and House measures expanding Republic Act No. 11037",
+      "title": "Masustansyang Pagkain Act Amendments",
+      "area": "Social protection",
+      "sender": "ULAP Secretariat",
+      "senderType": "ULAP Secretariat - approval/input circulation",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "support",
+      "summary": "ULAP circulated a draft position supporting stronger school-based feeding and nutrition support. Key ULAP issues include national financing, clear agency accountability, safe local procurement, food safety, and avoiding unfunded implementation burdens on LGUs.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support stronger school feeding and nutrition programs with national financing, clear accountability, safe local procurement, and no unfunded LGU burdens.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0014",
+      "ref": "HB 2374",
+      "measure": "PTCA substitute bill and House Bills 2374, 3137, 5935, and 6510 / Welfare of Children regular meeting",
+      "title": "PTCA Bill and Welfare of Children Measures",
+      "area": "Education",
+      "sender": "House Committee on Welfare of Children",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "The House Committee on Welfare of Children invited ULAP to its 11 May 2026 regular meeting and requested ULAP’s position, comments, and suggestions, with a position paper due on or before 11 May 2026, on the PTCA substitute bill and the pending Magna Carta of Children measures.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support the PTCA substitute bill and the broader child-welfare objectives of the MCC measures, subject to safeguards preserving school-governance clarity, no compulsory PTCA burdens, clear LGU and child-protection roles, and funded implementation.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0015",
+      "ref": "HB 1901, HB 2412",
+      "measure": "House Bill No. 1901 and House Bill No. 2412 / Water service cooperatives and local cooperatives development funds",
+      "title": "Water Service Cooperatives and Local Cooperatives Development Funds",
+      "area": "Local governance",
+      "sender": "House Committee on Cooperatives Development",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "The House Committee on Cooperatives Development requested ULAP’s comments or recommendations on House Bill No. 1901 and House Bill No. 2412, with submission requested on or before 11 May 2026. Key LGU issues include local fiscal autonomy, fund earmarks, local planning discretion, and interaction with existing service arrangements.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support cooperative and water-access objectives only with major amendments preserving local fiscal autonomy, avoiding rigid earmarks, and respecting existing service arrangements.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0016",
+      "ref": "HB 4789, HB 6163",
+      "measure": "HB 4789 and HB 6163 - eBotika Act",
+      "title": "eBotika Act",
+      "area": "Health / Trade / Online pharmacies",
+      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
+      "senderType": "House Committee",
+      "office": "House Committee on Trade and Industry",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "Meeting notice and attached bills on online pharmacies; orphaned draft from prior monitor preserved and imported.",
+      "requestedAction": "Draft position paper / resource input",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0017",
+      "ref": "PP-2026-0017",
+      "measure": "Revised Draft EO on streamlining CLUPs and physical framework plans",
+      "title": "Revised Draft EO on Streamlining CLUPs and Physical Framework Plans",
+      "area": "Land use / CLUP / Physical framework planning",
+      "sender": "ULAP Secretariat / DHSUD-ELUPDB",
+      "senderType": "National Agency",
+      "office": "DHSUD / National Land Use Committee",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "DHSUD transmitted revised draft EO incorporating NLUC TWG inputs and requested further comments for the next NLUC TWG.",
+      "requestedAction": "Further comments/recommendations",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0018",
+      "ref": "PP-2026-0018",
+      "measure": "PEAS bills and National Environmental Protection Agency / EMB strengthening bills",
+      "title": "PEAS Bills and National Environmental Protection Agency",
+      "area": "Environment / Environmental assessment / EMB",
+      "sender": "ULAP Secretariat / House Committee on Ecology",
+      "senderType": "House Committee",
+      "office": "House Committee on Ecology",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "Ecology Committee invited ULAP to 1 Jun 2026 meeting and requested position papers prior to meeting.",
+      "requestedAction": "Submit position paper prior to meeting",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0019",
+      "ref": "PP-2026-0019",
+      "measure": "Draft DPO creating NTWG on Healthy Workplaces",
+      "title": "Draft DPO Creating NTWG on Healthy Workplaces",
+      "area": "Health promotion / Healthy workplaces",
+      "sender": "ULAP Secretariat / DOH Health Promotion Bureau",
+      "senderType": "National Agency",
+      "office": "Department of Health",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "DOH requested comments on draft DPO and official representative designations; comments due May 29.",
+      "requestedAction": "Submit comments/proposed revisions",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0020",
+      "ref": "HB 9079 +4",
+      "measure": "HB 9079, HB 4702, HB 4773, HB 5944 - amendments to RA 8293 / IP Code",
+      "title": "Amendments to the Intellectual Property Code (RA 8293)",
+      "area": "Trade / Intellectual property",
+      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
+      "senderType": "House Committee",
+      "office": "House Committee on Trade and Industry",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "CTI invited ULAP to meeting on IP Code amendments involving sound/non-visible marks and IPOPHL strengthening bills.",
+      "requestedAction": "Submit views/comments/position paper",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0021",
+      "ref": "HB 5203, HB 673",
+      "measure": "HB 5203 Zero-Balance Billing; HBs 673, 2672, 3145, 3973, 4136, 5456, 5643, 7925, 8417 on EMS System",
+      "title": "Zero-Balance Billing & Emergency Medical Services",
+      "area": "Health / Hospital finance / Emergency medical services",
+      "sender": "ULAP Secretariat / House Committee on Health",
+      "senderType": "House Committee",
+      "office": "House Committee on Health",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "Health Committee invited ULAP as resource person for 1 Jun 2026 meeting and requested comments/recommendations one day before.",
+      "requestedAction": "Submit comments/recommendations at least one day before meeting",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0022",
+      "ref": "HB 847 +5",
+      "measure": "HB 847, HB 1318, HB 1721, HB 5810, HB 6822, HB 7220 - Corporate Social Responsibility Act",
+      "title": "Corporate Social Responsibility Act",
+      "area": "Trade / Corporate social responsibility / Local development",
+      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
+      "senderType": "House Committee",
+      "office": "House Committee on Trade and Industry",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "CTI TWG invite expressly requested ULAP position paper for CSR bills before the 1 Jun 2026 TWG meeting.",
+      "requestedAction": "Submit position paper",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0023",
+      "ref": "HB 8466",
+      "measure": "HB 8466 - National Land Use Policy Act; CAR concerns and RDC-CAR resolutions",
+      "title": "National Land Use Policy Act",
+      "area": "Land use / National Land Use Policy / CAR concerns",
+      "sender": "ULAP Secretariat / DEPDev Regional Office CAR",
+      "senderType": "Regional Agency",
+      "office": "DEPDev Regional Office CAR / CAR RLUC",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "DEPDev CAR requested ULAP comments/suggestions on whether CAR concerns on HB 8466 should be retained, deferred, or revised.",
+      "requestedAction": "Submit comments and suggestions",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0024",
+      "ref": "HR 569",
+      "measure": "HR 569 - Disaster and Climate Emergency and urgent risk-informed governance",
+      "title": "Disaster and Climate Emergency and Urgent Risk-informed Governance",
+      "area": "Climate change / DRRM / Climate justice",
+      "sender": "ULAP Secretariat / House Committee on Climate Change",
+      "senderType": "House Committee",
+      "office": "House Committee on Climate Change",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "study",
+      "summary": "Committee requested ULAP position paper on HR 569 before its tentative May 2026 deliberation.",
+      "requestedAction": "Submit position paper",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0025",
+      "ref": "PP-2026-0025",
+      "measure": "Proposed CLUP and ZO Implementation Monitoring Guidelines",
+      "title": "Proposed CLUP and ZO Implementation Monitoring Guidelines",
+      "area": "Land use planning / CLUP / Zoning / Local autonomy",
+      "sender": "ULAP Secretariat / DHSUD-ELUPDB",
+      "senderType": "National Agency / Internal Forward",
+      "office": "DHSUD-ELUPDB",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "amend",
+      "summary": "DHSUD-ELUPDB shared the CLUP and ZO evaluation, decision mapping, and project implementation monitoring tools for advance review and requested insights/feedback during the June 1 online consultation.",
+      "requestedAction": "Review consultation materials; prepare ULAP comments / position paper",
+      "recommendation": "Support CLUP-ZO monitoring with safeguards: advisory use, local autonomy, due process, phased rollout, data governance, and national technical/fiscal support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0026",
+      "ref": "PP-2026-0026",
+      "measure": "Draft Executive Order mandating GoodVibesTV as official government communications system",
+      "title": "Draft Executive Order Mandating GoodVibesTV as Official Government Communications System",
+      "area": "Digital governance / Government communications / LGU autonomy / Data privacy",
+      "sender": "ULAP Secretariat / Marlon Leodones",
+      "senderType": "Private Proponent / Internal Forward",
+      "office": "Private proponent / ULAP Secretariat",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "oppose",
+      "summary": "Private proponent submitted GoodVibesTV platform proposal, ULAP endorsement request, program blueprint, financial model, and draft EO mandating adoption by all NGAs, LGUs, barangays, and GOCCs.",
+      "requestedAction": "Review proposal and draft EO; prepare ULAP position/comments on possible endorsement and TWG role",
+      "recommendation": "Do not endorse the draft EO as written; support only a platform-neutral, procurement-compliant, privacy/cybersecure, funded, phased, and consultative approach.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0027",
+      "ref": "EO 103, EO 138",
+      "measure": "Draft IRR of EO No. 103, s. 2025 amending EO No. 138, s. 2021",
+      "title": "Draft IRR of EO No. 103, s. 2025 Amending EO No. 138, s. 2021",
+      "area": "Devolution / Local autonomy / Fiscal decentralization",
+      "sender": "Union of Local Authorities of the Philippines / DBM ComDev Secretariat (forwarded)",
+      "senderType": "ULAP forward - DBM ComDev Secretariat",
+      "office": "ULAP Secretariat / DBM ComDev Secretariat",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "amend",
+      "summary": "DBM ComDev Secretariat requested availability for the 12th Committee of Devolution meeting to finalize the draft IRR of EO 103; ULAP needs preparatory position based on prior comments.",
+      "requestedAction": "Prepare/reaffirm ULAP position and comments for ComDev finalization meeting",
+      "recommendation": "Support finalization only with capacity-based safeguards, Annex A clarification, NGA-LGU sequencing, formal support instruments for fiscal gaps, and technical corrections.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0028",
+      "ref": "PP-2026-0028",
+      "measure": "Draft Memorandum: Guidelines on the Organization, Functions, and Operationalization of the Inspectorate Team for Ligtas Pinoy Centers (LPCs), Version 2",
+      "title": "Draft Memorandum: Guidelines on the Organization, Functions, and Operationalization of the Inspectorate Team for Ligtas Pinoy Centers (lpcs), Version 2",
+      "area": "Disaster resilience / Evacuation centers / Local infrastructure governance",
+      "sender": "ULAP Secretariat / OCD Project Management Office Ligtas Pinoy Act (forwarded)",
+      "senderType": "ULAP forward - OCD Ligtas Pinoy PMO",
+      "office": "ULAP Secretariat / Office of Civil Defense - Ligtas Pinoy PMO",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "amend",
+      "summary": "OCD Ligtas Pinoy PMO requested review/comments on the revised draft memorandum for organizing and operationalizing LPC Inspectorate Teams, with comments and forms due 03 June 2026; non-submission deemed concurrence.",
+      "requestedAction": "Review revised draft memorandum and prepare ULAP comments",
+      "recommendation": "Support issuance subject to clear role delineation, funded mandates, harmonized reporting, turnover safeguards, post-turnover support, data governance, and LGU consultation.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0029",
+      "ref": "HB 5099",
+      "measure": "House Bill No. 5099 - Public Solicitation Act of 2025",
+      "title": "Public Solicitation Act of 2025",
+      "area": "Social services / Public solicitations / Local governance",
+      "sender": "ULAP Secretariat / House Committee on Social Services (forwarded)",
+      "senderType": "Congress / House; internal forward",
+      "office": "House Committee on Social Services / ULAP Secretariat",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "amend",
+      "summary": "House Committee on Social Services requested ULAP written position paper on HB 5099 regulating public solicitations, repealing Act No. 4075/PD 1564. Local issues: DSWD-LGU permit coordination, disaster-response fast lane, privacy safeguards, proportional requirements, and avoiding unfunded LGU enforcement burdens.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support with amendments: modernize solicitation regulation while preserving local permit/verification roles, disaster-response speed, privacy protections, proportional compliance, and funded implementation support for LGUs.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0030",
+      "ref": "HB 3405",
+      "measure": "Substitute Bill to House Bills Nos. 3405, 6881, 7834, and 8407 - Gender Responsive and Inclusive Pandemic, Emergency or Disaster Management Act",
+      "title": "Gender Responsive and Inclusive Pandemic, Emergency or Disaster Management Act",
+      "area": "Disaster risk reduction and climate / Gender and social protection / Local governance",
+      "sender": "ULAP Secretariat / House Committee on Appropriations (forwarded)",
+      "senderType": "Congress / House; internal forward",
+      "office": "House Committee on Appropriations / ULAP Secretariat",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "amend",
+      "summary": "House Committee on Appropriations referred the substitute bill and requested ULAP comments, recommendations, and position paper before committee action. Local issues: LGU implementation roles, local autonomy, GAD/LDRRM funding, reporting/data privacy, barangay/service-delivery capacity, and IRR consultation.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support with amendments: enact gender-responsive disaster/emergency protocols while preserving LGU autonomy, requiring national funding and technical assistance, phasing local implementation, protecting data privacy and survivor confidentiality, including ULAP/LGU leagues in the IRR, and calibrating penalties to culpable neglect.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0031",
+      "ref": "PP-2026-0031",
+      "measure": "ECOSOC and HLPF Review - retention of Local and Regional Governments Forum wording in operative paragraph 14",
+      "title": "ECOSOC & HLPF Review — LRG Forum Wording",
+      "area": "SDG localization / Multilevel governance / International advocacy",
+      "sender": "United Cities and Local Governments (UCLG)",
+      "senderType": "International counterpart / UN negotiations",
+      "office": "UCLG / Global Taskforce of Local and Regional Governments",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "Draft Prepared",
+      "position": "support",
+      "summary": "UCLG requested Presidency support for outreach to Ministries of Foreign Affairs and Permanent Missions to the UN to retain wording calling for an oral presentation on the Local and Regional Governments Forum to the HLPF. Issue is live UN negotiation text and official input/advocacy rather than a Philippine bill or executive order.",
+      "requestedAction": "Prepare official input / position paper",
+      "recommendation": "Support retention of operative paragraph 14 wording recognizing an oral presentation on the Local and Regional Governments Forum to the HLPF, while clarifying that local and regional governments are public authorities contributing implementation evidence and multilevel governance inputs without altering the UN intergovernmental character.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0032",
+      "ref": "PP-2026-0032",
+      "measure": "Draft UCLG ASPAC Position Paper for the UCLG World Congress 2026 - Asia-Pacific Assembly Track",
+      "title": "Draft UCLG ASPAC Position Paper for the UCLG World Congress 2026",
+      "area": "Local governance",
+      "sender": "Union of Local Authorities of the Philippines / UCLG ASPAC Secretariat (forwarded)",
+      "senderType": "ULAP Secretariat - UCLG ASPAC feedback request",
+      "office": "ULAP Secretariat / UCLG ASPAC",
+      "priority": "High (≤3 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "UCLG ASPAC requested member feedback/comments on the draft Asia-Pacific Assembly Track Position Paper for the UCLG World Congress 2026, including regional priorities on local autonomy, fiscal empowerment, climate resilience, digital governance, infrastructure, city diplomacy, and election arrangements.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with refinements: endorse UCLG ASPAC's localization, fiscal empowerment, climate resilience, digital governance, infrastructure, social inclusion, and city diplomacy messages while strengthening local-autonomy safeguards, Philippine archipelagic/coastal priorities, implementation finance, data governance, and transparent regional election arrangements.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0033",
+      "ref": "PP-2026-0033",
+      "measure": "DILG LGC RevAmP consolidated reform proposals / Copy of Consolidation of Proposed Amendments to the LGC",
+      "title": "DILG LGC RevAmP Consolidated Reform Proposals",
+      "area": "Local governance",
+      "sender": "DILG BLGD-LDPD / ULAP Secretariat forward",
+      "senderType": "National Government Agency",
+      "office": "Department of the Interior and Local Government - Bureau of Local Government Development",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "study",
+      "summary": "DILG BLGD requested LGU Pillar endorsement of consolidated LGC RevAmP reform proposals. Accessible source matrix includes planning professionalization, barangay digital services, DRRM staffing, HR/PS-cap, fiscal, environmental, and service-delivery proposals. ULAP issue is to support LGC reform subject to LGU validation, local autonomy, fiscal-impact review, phased implementation, and no unfunded mandates.",
+      "requestedAction": "Endorse / coordinate with leagues",
+      "recommendation": "Conditional endorsement for further structured vetting, subject to LGU validation, fiscal-impact review, protection of local autonomy, phased implementation, and avoidance of unfunded mandates.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0034",
+      "ref": "HB 7707",
+      "measure": "HB 7707 - Local Tax and Fee Exemption for Micro Enterprises Act",
+      "title": "Local Tax and Fee Exemption for Micro Enterprises Act",
+      "area": "Fiscal decentralization",
+      "sender": "House Committee on Micro, Small and Medium Enterprise Development / ULAP Secretariat forward",
+      "senderType": "Congress / House",
+      "office": "House of Representatives - Committee on Micro, Small and Medium Enterprise Development",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "sourceStatus": "For Internal Review",
+      "position": "amend",
+      "summary": "House MSME Committee requested comments/recommendations on HB 7707. The bill exempts micro enterprises from local business taxes, business permit/license fees, and local regulatory fees and charges. ULAP issue is to support microenterprise formalization while revising blanket exemptions to preserve LGU fiscal autonomy, cost recovery, regulatory capacity, and LGU participation in the IRR.",
+      "requestedAction": "Comment / annotate draft bill",
+      "recommendation": "Support objective but recommend substantial amendments to protect LGU fiscal autonomy, preserve regulatory cost recovery, require fiscal safeguards, and include ULAP/LGU leagues in IRR development.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
       "id": "pp-2026-0035",
       "ref": "HB 6084 +3",
       "measure": "BIDANI bills - HB 6084, HB 4967, HB 3562, HB 666 and related measures",
@@ -757,6 +1498,7 @@
       "office": "House of Representatives",
       "priority": "Medium (≤7 days)",
       "status": "For Approval",
+      "sourceStatus": "For Approval",
       "position": "amend",
       "summary": "Request for ULAP position paper on Barangay Integrated Development Approach for Nutrition Improvement measures; submission-ready ULAP paper now linked for Board/ED approval.",
       "requestedAction": "Prepare position paper",
@@ -778,6 +1520,7 @@
       "office": "House of Representatives",
       "priority": "Medium (≤7 days)",
       "status": "For Approval",
+      "sourceStatus": "For Approval",
       "position": "amend",
       "summary": "Request for comments/position paper on shipbuilding and ship repair measures, with committee matrix and bill texts attached.",
       "requestedAction": "Prepare position paper",
@@ -799,6 +1542,7 @@
       "office": "House of Representatives",
       "priority": "Medium (≤7 days)",
       "status": "For Approval",
+      "sourceStatus": "For Approval",
       "position": "amend",
       "summary": "Request for comments and position paper on SEF-related measures; source material provided through committee link.",
       "requestedAction": "Prepare position paper",
@@ -820,6 +1564,7 @@
       "office": "House of Representatives",
       "priority": "Medium (≤7 days)",
       "status": "For Approval",
+      "sourceStatus": "For Approval",
       "position": "amend",
       "summary": "Meeting invitation and request/intake item for basic education governance; submission-ready ULAP position paper now linked for Board/ED approval or post-hearing transmission.",
       "requestedAction": "Attend hearing and submit statement",
@@ -841,6 +1586,7 @@
       "office": "House of Representatives",
       "priority": "Critical (same-day)",
       "status": "For Approval",
+      "sourceStatus": "For Approval",
       "position": "amend",
       "summary": "Second TWG invitation on CLIMA Bill; attendance confirmation requested and ULAP inputs may be needed for TWG discussion.",
       "requestedAction": "Attend hearing and submit statement",
@@ -862,6 +1608,7 @@
       "office": "Food Safety Regulation Coordinating Board",
       "priority": "Medium (≤7 days)",
       "status": "For Approval",
+      "sourceStatus": "For Approval",
       "position": "support",
       "summary": "Request for comments on draft FSRCB resolution designating Secretariat personnel; comments due through attached Excel template.",
       "requestedAction": "Provide LGU inputs",
@@ -883,6 +1630,7 @@
       "office": "FDA / Philippines National Plastic Action Partnership",
       "priority": "Routine (>7 days)",
       "status": "For Approval",
+      "sourceStatus": "For Approval",
       "position": "amend",
       "summary": "Request for comments on regulatory sandbox policy for refilling guidelines, including flexibilities, simplified procedures, anticipatory authorization, and DENR/EPR information-sharing.",
       "requestedAction": "Provide LGU inputs",
@@ -903,7 +1651,8 @@
       "senderType": "Other",
       "office": "UCLG / LAMG / GTF",
       "priority": "Routine (>7 days)",
-      "status": "For Leadership Decision",
+      "status": "For Approval",
+      "sourceStatus": "For Leadership Decision",
       "position": "support",
       "summary": "Monitoring/reference item: circular shares international LRG position paper/statement under review, not a direct request for an ULAP position paper unless leadership elects to provide inputs.",
       "requestedAction": "Other",
@@ -913,733 +1662,41 @@
       "signoffs": [],
       "notes": [],
       "docs": []
-    },
-    {
-      "id": "pp-2026-0016",
-      "ref": "HB 4789, HB 6163",
-      "measure": "HB 4789 and HB 6163 - eBotika Act",
-      "title": "eBotika Act",
-      "area": "Health / Trade / Online pharmacies",
-      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
-      "senderType": "House Committee",
-      "office": "House Committee on Trade and Industry",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "Meeting notice and attached bills on online pharmacies; orphaned draft from prior monitor preserved and imported.",
-      "requestedAction": "Draft position paper / resource input",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0017",
-      "ref": "PP-2026-0017",
-      "measure": "Revised Draft EO on streamlining CLUPs and physical framework plans",
-      "title": "Revised Draft EO on Streamlining CLUPs and Physical Framework Plans",
-      "area": "Land use / CLUP / Physical framework planning",
-      "sender": "ULAP Secretariat / DHSUD-ELUPDB",
-      "senderType": "National Agency",
-      "office": "DHSUD / National Land Use Committee",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "DHSUD transmitted revised draft EO incorporating NLUC TWG inputs and requested further comments for the next NLUC TWG.",
-      "requestedAction": "Further comments/recommendations",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0018",
-      "ref": "PP-2026-0018",
-      "measure": "PEAS bills and National Environmental Protection Agency / EMB strengthening bills",
-      "title": "PEAS Bills and National Environmental Protection Agency",
-      "area": "Environment / Environmental assessment / EMB",
-      "sender": "ULAP Secretariat / House Committee on Ecology",
-      "senderType": "House Committee",
-      "office": "House Committee on Ecology",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "Ecology Committee invited ULAP to 1 Jun 2026 meeting and requested position papers prior to meeting.",
-      "requestedAction": "Submit position paper prior to meeting",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0019",
-      "ref": "PP-2026-0019",
-      "measure": "Draft DPO creating NTWG on Healthy Workplaces",
-      "title": "Draft DPO Creating NTWG on Healthy Workplaces",
-      "area": "Health promotion / Healthy workplaces",
-      "sender": "ULAP Secretariat / DOH Health Promotion Bureau",
-      "senderType": "National Agency",
-      "office": "Department of Health",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "DOH requested comments on draft DPO and official representative designations; comments due May 29.",
-      "requestedAction": "Submit comments/proposed revisions",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0020",
-      "ref": "HB 9079 +4",
-      "measure": "HB 9079, HB 4702, HB 4773, HB 5944 - amendments to RA 8293 / IP Code",
-      "title": "Amendments to the Intellectual Property Code (RA 8293)",
-      "area": "Trade / Intellectual property",
-      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
-      "senderType": "House Committee",
-      "office": "House Committee on Trade and Industry",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "CTI invited ULAP to meeting on IP Code amendments involving sound/non-visible marks and IPOPHL strengthening bills.",
-      "requestedAction": "Submit views/comments/position paper",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0021",
-      "ref": "HB 5203, HB 673",
-      "measure": "HB 5203 Zero-Balance Billing; HBs 673, 2672, 3145, 3973, 4136, 5456, 5643, 7925, 8417 on EMS System",
-      "title": "Zero-Balance Billing & Emergency Medical Services",
-      "area": "Health / Hospital finance / Emergency medical services",
-      "sender": "ULAP Secretariat / House Committee on Health",
-      "senderType": "House Committee",
-      "office": "House Committee on Health",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "Health Committee invited ULAP as resource person for 1 Jun 2026 meeting and requested comments/recommendations one day before.",
-      "requestedAction": "Submit comments/recommendations at least one day before meeting",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0022",
-      "ref": "HB 847 +5",
-      "measure": "HB 847, HB 1318, HB 1721, HB 5810, HB 6822, HB 7220 - Corporate Social Responsibility Act",
-      "title": "Corporate Social Responsibility Act",
-      "area": "Trade / Corporate social responsibility / Local development",
-      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
-      "senderType": "House Committee",
-      "office": "House Committee on Trade and Industry",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "CTI TWG invite expressly requested ULAP position paper for CSR bills before the 1 Jun 2026 TWG meeting.",
-      "requestedAction": "Submit position paper",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0023",
-      "ref": "HB 8466",
-      "measure": "HB 8466 - National Land Use Policy Act; CAR concerns and RDC-CAR resolutions",
-      "title": "National Land Use Policy Act",
-      "area": "Land use / National Land Use Policy / CAR concerns",
-      "sender": "ULAP Secretariat / DEPDev Regional Office CAR",
-      "senderType": "Regional Agency",
-      "office": "DEPDev Regional Office CAR / CAR RLUC",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "DEPDev CAR requested ULAP comments/suggestions on whether CAR concerns on HB 8466 should be retained, deferred, or revised.",
-      "requestedAction": "Submit comments and suggestions",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0024",
-      "ref": "HR 569",
-      "measure": "HR 569 - Disaster and Climate Emergency and urgent risk-informed governance",
-      "title": "Disaster and Climate Emergency and Urgent Risk-informed Governance",
-      "area": "Climate change / DRRM / Climate justice",
-      "sender": "ULAP Secretariat / House Committee on Climate Change",
-      "senderType": "House Committee",
-      "office": "House Committee on Climate Change",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "study",
-      "summary": "Committee requested ULAP position paper on HR 569 before its tentative May 2026 deliberation.",
-      "requestedAction": "Submit position paper",
-      "recommendation": "Recommended position to be finalized during internal review.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0025",
-      "ref": "PP-2026-0025",
-      "measure": "Proposed CLUP and ZO Implementation Monitoring Guidelines",
-      "title": "Proposed CLUP and ZO Implementation Monitoring Guidelines",
-      "area": "Land use planning / CLUP / Zoning / Local autonomy",
-      "sender": "ULAP Secretariat / DHSUD-ELUPDB",
-      "senderType": "National Agency / Internal Forward",
-      "office": "DHSUD-ELUPDB",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "amend",
-      "summary": "DHSUD-ELUPDB shared the CLUP and ZO evaluation, decision mapping, and project implementation monitoring tools for advance review and requested insights/feedback during the June 1 online consultation.",
-      "requestedAction": "Review consultation materials; prepare ULAP comments / position paper",
-      "recommendation": "Support CLUP-ZO monitoring with safeguards: advisory use, local autonomy, due process, phased rollout, data governance, and national technical/fiscal support.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0026",
-      "ref": "PP-2026-0026",
-      "measure": "Draft Executive Order mandating GoodVibesTV as official government communications system",
-      "title": "Draft Executive Order Mandating GoodVibesTV as Official Government Communications System",
-      "area": "Digital governance / Government communications / LGU autonomy / Data privacy",
-      "sender": "ULAP Secretariat / Marlon Leodones",
-      "senderType": "Private Proponent / Internal Forward",
-      "office": "Private proponent / ULAP Secretariat",
-      "priority": "Medium (≤7 days)",
-      "status": "Draft Prepared",
-      "position": "oppose",
-      "summary": "Private proponent submitted GoodVibesTV platform proposal, ULAP endorsement request, program blueprint, financial model, and draft EO mandating adoption by all NGAs, LGUs, barangays, and GOCCs.",
-      "requestedAction": "Review proposal and draft EO; prepare ULAP position/comments on possible endorsement and TWG role",
-      "recommendation": "Do not endorse the draft EO as written; support only a platform-neutral, procurement-compliant, privacy/cybersecure, funded, phased, and consultative approach.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0027",
-      "ref": "EO 103, EO 138",
-      "measure": "Draft IRR of EO No. 103, s. 2025 amending EO No. 138, s. 2021",
-      "title": "Draft IRR of EO No. 103, s. 2025 Amending EO No. 138, s. 2021",
-      "area": "Devolution / Local autonomy / Fiscal decentralization",
-      "sender": "Union of Local Authorities of the Philippines / DBM ComDev Secretariat (forwarded)",
-      "senderType": "ULAP forward - DBM ComDev Secretariat",
-      "office": "ULAP Secretariat / DBM ComDev Secretariat",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "amend",
-      "summary": "DBM ComDev Secretariat requested availability for the 12th Committee of Devolution meeting to finalize the draft IRR of EO 103; ULAP needs preparatory position based on prior comments.",
-      "requestedAction": "Prepare/reaffirm ULAP position and comments for ComDev finalization meeting",
-      "recommendation": "Support finalization only with capacity-based safeguards, Annex A clarification, NGA-LGU sequencing, formal support instruments for fiscal gaps, and technical corrections.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0028",
-      "ref": "PP-2026-0028",
-      "measure": "Draft Memorandum: Guidelines on the Organization, Functions, and Operationalization of the Inspectorate Team for Ligtas Pinoy Centers (LPCs), Version 2",
-      "title": "Draft Memorandum: Guidelines on the Organization, Functions, and Operationalization of the Inspectorate Team for Ligtas Pinoy Centers (lpcs), Version 2",
-      "area": "Disaster resilience / Evacuation centers / Local infrastructure governance",
-      "sender": "ULAP Secretariat / OCD Project Management Office Ligtas Pinoy Act (forwarded)",
-      "senderType": "ULAP forward - OCD Ligtas Pinoy PMO",
-      "office": "ULAP Secretariat / Office of Civil Defense - Ligtas Pinoy PMO",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "amend",
-      "summary": "OCD Ligtas Pinoy PMO requested review/comments on the revised draft memorandum for organizing and operationalizing LPC Inspectorate Teams, with comments and forms due 03 June 2026; non-submission deemed concurrence.",
-      "requestedAction": "Review revised draft memorandum and prepare ULAP comments",
-      "recommendation": "Support issuance subject to clear role delineation, funded mandates, harmonized reporting, turnover safeguards, post-turnover support, data governance, and LGU consultation.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0029",
-      "ref": "HB 5099",
-      "measure": "House Bill No. 5099 - Public Solicitation Act of 2025",
-      "title": "Public Solicitation Act of 2025",
-      "area": "Social services / Public solicitations / Local governance",
-      "sender": "ULAP Secretariat / House Committee on Social Services (forwarded)",
-      "senderType": "Congress / House; internal forward",
-      "office": "House Committee on Social Services / ULAP Secretariat",
-      "priority": "Medium (≤7 days)",
-      "status": "Draft Prepared",
-      "position": "amend",
-      "summary": "House Committee on Social Services requested ULAP written position paper on HB 5099 regulating public solicitations, repealing Act No. 4075/PD 1564. Local issues: DSWD-LGU permit coordination, disaster-response fast lane, privacy safeguards, proportional requirements, and avoiding unfunded LGU enforcement burdens.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Support with amendments: modernize solicitation regulation while preserving local permit/verification roles, disaster-response speed, privacy protections, proportional compliance, and funded implementation support for LGUs.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0030",
-      "ref": "HB 3405",
-      "measure": "Substitute Bill to House Bills Nos. 3405, 6881, 7834, and 8407 - Gender Responsive and Inclusive Pandemic, Emergency or Disaster Management Act",
-      "title": "Gender Responsive and Inclusive Pandemic, Emergency or Disaster Management Act",
-      "area": "Disaster risk reduction and climate / Gender and social protection / Local governance",
-      "sender": "ULAP Secretariat / House Committee on Appropriations (forwarded)",
-      "senderType": "Congress / House; internal forward",
-      "office": "House Committee on Appropriations / ULAP Secretariat",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "amend",
-      "summary": "House Committee on Appropriations referred the substitute bill and requested ULAP comments, recommendations, and position paper before committee action. Local issues: LGU implementation roles, local autonomy, GAD/LDRRM funding, reporting/data privacy, barangay/service-delivery capacity, and IRR consultation.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Support with amendments: enact gender-responsive disaster/emergency protocols while preserving LGU autonomy, requiring national funding and technical assistance, phasing local implementation, protecting data privacy and survivor confidentiality, including ULAP/LGU leagues in the IRR, and calibrating penalties to culpable neglect.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0031",
-      "ref": "PP-2026-0031",
-      "measure": "ECOSOC and HLPF Review - retention of Local and Regional Governments Forum wording in operative paragraph 14",
-      "title": "ECOSOC & HLPF Review — LRG Forum Wording",
-      "area": "SDG localization / Multilevel governance / International advocacy",
-      "sender": "United Cities and Local Governments (UCLG)",
-      "senderType": "International counterpart / UN negotiations",
-      "office": "UCLG / Global Taskforce of Local and Regional Governments",
-      "priority": "High (≤3 days)",
-      "status": "Draft Prepared",
-      "position": "support",
-      "summary": "UCLG requested Presidency support for outreach to Ministries of Foreign Affairs and Permanent Missions to the UN to retain wording calling for an oral presentation on the Local and Regional Governments Forum to the HLPF. Issue is live UN negotiation text and official input/advocacy rather than a Philippine bill or executive order.",
-      "requestedAction": "Prepare official input / position paper",
-      "recommendation": "Support retention of operative paragraph 14 wording recognizing an oral presentation on the Local and Regional Governments Forum to the HLPF, while clarifying that local and regional governments are public authorities contributing implementation evidence and multilevel governance inputs without altering the UN intergovernmental character.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0001",
-      "ref": "HB 1613 +3",
-      "measure": "HB 1613, HB 6948, HB 7902, HB 8353 / National Coastal Greenbelt Program",
-      "title": "National Coastal Greenbelt Program",
-      "area": "Environment and natural resources",
-      "sender": "House Committee on Climate Change",
-      "senderType": "Congress / House",
-      "office": "House of Representatives",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "House Committee on Climate Change requested ULAP's position paper on the proposed National Coastal Greenbelt Program and asked whether the measure should be harmonized with the Integrated Coastal Management framework; key LGU issues include land-use coordination, local autonomy, financing, and site-specific implementation.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Support with safeguards; integrate with ICM and preserve LGU land-use authority, participation, and national funding support.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0002",
-      "ref": "PP-2026-0002",
-      "measure": "Working Draft Bill on the Creation of the Department of Fisheries and Aquatic Resources",
-      "title": "Department of Fisheries and Aquatic Resources Bill",
-      "area": "Agriculture and food security",
-      "sender": "House Committee on Aquaculture and Fisheries Resources",
-      "senderType": "Congress / House",
-      "office": "House of Representatives",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "House Committee on Aquaculture and Fisheries Resources requested comments on the DFAR working draft; the current draft strengthens national fisheries governance but includes provisions that may recentralize municipal waters regulation and require stronger LGU safeguards.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Support in principle subject to fundamental amendments preserving LGU jurisdiction over municipal waters and providing national support.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0003",
-      "ref": "RA 7916, RA 8748",
-      "measure": "Proposed Amendments to RA No. 7916, as amended by RA No. 8748",
-      "title": "Proposed Amendments to RA No. 7916, as Amended by RA No. 8748",
-      "area": "Local governance",
-      "sender": "PEZA Legal Affairs Group",
-      "senderType": "National Government Agency",
-      "office": "Philippine Economic Zone Authority",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "oppose",
-      "summary": "PEZA transmitted draft amendments to its charter and sought ULAP support; the proposed changes expand PEZA powers over ecozone designation, permitting, and utilities, with potential impacts on LGU land-use, regulatory, and fiscal authority.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Cannot support in present form; substantially revise to preserve LGU land-use, permitting, and fiscal authority while streamlining coordination.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0004",
-      "ref": "HB 8466, SB 152",
-      "measure": "House Bill No. 8466 and Senate Bill No. 152 / Proposed National Land Use Act",
-      "title": "Proposed National Land Use Act",
-      "area": "Local governance",
-      "sender": "Presidential Legislative Liaison Office",
-      "senderType": "National Government Agency",
-      "office": "Presidential Legislative Liaison Office",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "PLLO’s 05 May 2026 referral requested ULAP’s observations or recommendations on House Bill No. 8466 and Senate Bill No. 152 at the soonest possible time. Building on the earlier April NLUA intake, key LGU issues remain preservation of local planning and zoning authority, time-bound harmonization review, structured LGU consultation, and national technical and fiscal support.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Support enactment with safeguards: preserve LGU authority over local land use and zoning, keep higher-level review harmonizing and time-bound, require LGU consultation, and pair new duties with national support.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0005",
-      "ref": "EO 66",
-      "measure": "Draft amendment to EO No. 66, s. 2012 / Rules on the Cancellation or Suspension of Classes and Work in Government Offices Due to Typhoons, Flooding, and Other Natural or Human-Induced Hazards and Disasters",
-      "title": "Rules on the Cancellation or Suspension of Classes and Work in Government Offices Due to Typhoons, Flooding, and Other Natural or Human-induced Hazards and Disasters",
-      "area": "Education and disaster risk reduction",
-      "sender": "Office of the Secretary",
-      "senderType": "National Government Agency",
-      "office": "Department of Education",
-      "priority": "Urgent (≤2 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "DepEd requested ULAP's final comments on the proposed amendments to EO No. 66, s. 2012 and asked that submissions be made through the attached form by 22 April 2026. Key LGU issues include preserving self-executing local suspension authority, clarifying the heat-index trigger, ensuring direct advisory relay to LDRRMCs, and preventing unfunded ADM obligations.",
-      "requestedAction": "Prepare position paper / submit final comments",
-      "recommendation": "Support with substantial safeguards; preserve self-executing LGU suspension authority, require direct national-to-local advisory relay, clarify the heat-index trigger, and prevent unfunded ADM obligations.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0006",
-      "ref": "SB 1506, HB 6235",
-      "measure": "CADENA Act / Senate Bill No. 1506 / House Bill Nos. 6235, 6792, 6898, 6903, 7450, 7461, 7712",
-      "title": "CADENA Act",
-      "area": "Digital governance",
-      "sender": "ULAP Secretariat",
-      "senderType": "Other",
-      "office": "Union of Local Authorities of the Philippines",
-      "priority": "Routine (>7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "ULAP Secretariat circulated the draft ULAP position paper on the CADENA Act and requested approval, inputs, or comments from the NEB and member leagues. The draft generally supports transparency and accountability objectives, subject to interoperable digital systems, phased LGU compliance, standardized reporting templates, national funding support, and calibrated sanctions tied to actual local readiness.",
-      "requestedAction": "Provide LGU inputs",
-      "recommendation": "Support with safeguards; require interoperable and funded national disclosure systems, phased LGU compliance, standardized templates, and calibrated sanctions tied to real local capacity and readiness.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0007",
-      "ref": "RA 11310",
-      "measure": "Proposed amendments to Republic Act No. 11310 / 4Ps Act Amendments",
-      "title": "Proposed Amendments to Republic Act No. 11310",
-      "area": "Social protection",
-      "sender": "ULAP Secretariat",
-      "senderType": "Other",
-      "office": "Union of Local Authorities of the Philippines",
-      "priority": "Routine (>7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "ULAP Secretariat circulated the draft ULAP position on proposed 4Ps Act amendments and requested approval, inputs, or comments from the NEB and member leagues. Key LGU issues include clear delineation of DSWD and LGU roles, validated local inputs into beneficiary records, due-process safeguards for suspension, delisting, and graduation, privacy-protected data-sharing, transition planning, and operational support for local participation.",
-      "requestedAction": "Provide LGU inputs",
-      "recommendation": "Support with safeguards; clearly define LGU roles in beneficiary management and convergence, provide lawful data-sharing and due-process protections, link graduation to transition support, and avoid unfunded local mandates.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0008",
-      "ref": "PP-2026-0008",
-      "measure": "Proposed Performance Indicators for Sustainable Education / SGLG 2026-2028 indicator framework",
-      "title": "SGLG 2026-2028 Indicator Framework",
-      "area": "Education",
-      "sender": "Office of the Assistant Secretary for Operations",
-      "senderType": "National Government Agency",
-      "office": "Department of Education",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "DepEd requested comments and recommendations on the proposed SGLG Sustainable Education indicator framework. Key ULAP issues include keeping the framework fair to different LGU capacities, distinguishing LGU-attributable actions from broader education outcomes, and avoiding duplicative reporting burdens.",
-      "requestedAction": "Provide LGU inputs",
-      "recommendation": "Support with safeguards; use outcome indicators contextually, profile new measures first, and avoid unfunded or duplicative reporting burdens on LGUs.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0009",
-      "ref": "HB 1110",
-      "measure": "Substitute Bill to House Bills 1110, 2373, 2852, 5790, 6067, 6129, 6145, 7811, and 8069 / Seal of Meritocracy and Good Local Governance Bill",
-      "title": "Seal of Meritocracy and Good Local Governance Bill",
-      "area": "Local governance",
-      "sender": "House Committee on Appropriations",
-      "senderType": "Congress / House",
-      "office": "House of Representatives",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "The House Committee on Appropriations forwarded a referral letter and substitute bill on the proposed Seal of Meritocracy and Good Local Governance measure. Key ULAP issues include preserving local autonomy, recalibrating the data-collection burden, and clarifying incentives, disincentives, and intervention mechanisms.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Support subject to substantial amendments preserving local autonomy, calibrating data burdens, and clarifying incentives, disincentives, and intervention mechanisms.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0010",
-      "ref": "SBN 21 +3",
-      "measure": "SBN 21, SBN 534, SBN 1918, and SRN 345 / Senate Health and Demography hearing on vape and heated tobacco regulation measures",
-      "title": "Vape and Heated Tobacco Regulation Measures",
-      "area": "Health",
-      "sender": "Senate Committee on Health and Demography",
-      "senderType": "Congress / Senate",
-      "office": "Senate of the Philippines",
-      "priority": "High (≤3 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "The Senate Committee on Health and Demography circulated hearing materials on pending vape and heated-tobacco measures. Key ULAP issues include stronger youth protection, a clear DOH/FDA-led regulatory framework, preservation of LGU authority to adopt stricter local safeguards, and avoidance of unfunded or unclear local enforcement burdens.",
-      "requestedAction": "Attend hearing and submit statement",
-      "recommendation": "Support stronger vape and heated-tobacco regulation with safeguards: keep regulation health-centered, preserve LGU authority to impose stricter local measures, and avoid unfunded or unclear local enforcement burdens.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0011",
-      "ref": "SB 156",
-      "measure": "Proposed Right to Information Act / Senate Bill Nos. 156, 1625, 1648 and related House measures",
-      "title": "PEAS Bills and EMB Strengthening",
-      "area": "Digital governance",
-      "sender": "ULAP Secretariat",
-      "senderType": "ULAP Secretariat - approval/input circulation",
-      "office": "Union of Local Authorities of the Philippines",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "ULAP circulated a draft position paper supporting a Right to Information law with safeguards on privacy, exceptions, records management, and realistic LGU implementation capacity. Key ULAP issues include workable local compliance, clear exceptions, and national support for records and digital systems.",
-      "requestedAction": "Provide LGU inputs",
-      "recommendation": "Support with safeguards: broaden public access while protecting privacy, clarifying exceptions, and ensuring realistic, funded LGU implementation.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0012",
-      "ref": "SB 1457, RA 11524",
-      "measure": "Coconut Farmers Trust Fund Amendments / Senate Bill No. 1457 and related measures amending Republic Act No. 11524",
-      "title": "Coconut Farmers Trust Fund Amendments",
-      "area": "Agriculture and food security",
-      "sender": "ULAP Secretariat",
-      "senderType": "ULAP Secretariat - approval/input circulation",
-      "office": "Union of Local Authorities of the Philippines",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "ULAP circulated a draft position supporting amendments to the Coconut Farmers Trust Fund framework. Key ULAP issues include structured LGU participation, joint registry validation, convergence with local agriculture investments, and funded local delivery support.",
-      "requestedAction": "Provide LGU inputs",
-      "recommendation": "Support amendments that strengthen farmer participation and local delivery, subject to clear LGU roles, better registry validation, and funded implementation support.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0013",
-      "ref": "RA 11037",
-      "measure": "Masustansyang Pagkain Act Amendments / Senate and House measures expanding Republic Act No. 11037",
-      "title": "Masustansyang Pagkain Act Amendments",
-      "area": "Social protection",
-      "sender": "ULAP Secretariat",
-      "senderType": "ULAP Secretariat - approval/input circulation",
-      "office": "Union of Local Authorities of the Philippines",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "support",
-      "summary": "ULAP circulated a draft position supporting stronger school-based feeding and nutrition support. Key ULAP issues include national financing, clear agency accountability, safe local procurement, food safety, and avoiding unfunded implementation burdens on LGUs.",
-      "requestedAction": "Provide LGU inputs",
-      "recommendation": "Support stronger school feeding and nutrition programs with national financing, clear accountability, safe local procurement, and no unfunded LGU burdens.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0014",
-      "ref": "HB 2374",
-      "measure": "PTCA substitute bill and House Bills 2374, 3137, 5935, and 6510 / Welfare of Children regular meeting",
-      "title": "PTCA Bill and Welfare of Children Measures",
-      "area": "Education",
-      "sender": "House Committee on Welfare of Children",
-      "senderType": "Congress / House",
-      "office": "House of Representatives",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "The House Committee on Welfare of Children invited ULAP to its 11 May 2026 regular meeting and requested ULAP’s position, comments, and suggestions, with a position paper due on or before 11 May 2026, on the PTCA substitute bill and the pending Magna Carta of Children measures.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Support the PTCA substitute bill and the broader child-welfare objectives of the MCC measures, subject to safeguards preserving school-governance clarity, no compulsory PTCA burdens, clear LGU and child-protection roles, and funded implementation.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0015",
-      "ref": "HB 1901, HB 2412",
-      "measure": "House Bill No. 1901 and House Bill No. 2412 / Water service cooperatives and local cooperatives development funds",
-      "title": "Water Service Cooperatives and Local Cooperatives Development Funds",
-      "area": "Local governance",
-      "sender": "House Committee on Cooperatives Development",
-      "senderType": "Congress / House",
-      "office": "House of Representatives",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "The House Committee on Cooperatives Development requested ULAP’s comments or recommendations on House Bill No. 1901 and House Bill No. 2412, with submission requested on or before 11 May 2026. Key LGU issues include local fiscal autonomy, fund earmarks, local planning discretion, and interaction with existing service arrangements.",
-      "requestedAction": "Prepare position paper",
-      "recommendation": "Support cooperative and water-access objectives only with major amendments preserving local fiscal autonomy, avoiding rigid earmarks, and respecting existing service arrangements.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0032",
-      "ref": "PP-2026-0032",
-      "measure": "Draft UCLG ASPAC Position Paper for the UCLG World Congress 2026 - Asia-Pacific Assembly Track",
-      "title": "Draft UCLG ASPAC Position Paper for the UCLG World Congress 2026",
-      "area": "Local governance",
-      "sender": "Union of Local Authorities of the Philippines / UCLG ASPAC Secretariat (forwarded)",
-      "senderType": "ULAP Secretariat - UCLG ASPAC feedback request",
-      "office": "ULAP Secretariat / UCLG ASPAC",
-      "priority": "High (≤3 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "UCLG ASPAC requested member feedback/comments on the draft Asia-Pacific Assembly Track Position Paper for the UCLG World Congress 2026, including regional priorities on local autonomy, fiscal empowerment, climate resilience, digital governance, infrastructure, city diplomacy, and election arrangements.",
-      "requestedAction": "Provide LGU inputs",
-      "recommendation": "Support with refinements: endorse UCLG ASPAC's localization, fiscal empowerment, climate resilience, digital governance, infrastructure, social inclusion, and city diplomacy messages while strengthening local-autonomy safeguards, Philippine archipelagic/coastal priorities, implementation finance, data governance, and transparent regional election arrangements.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0033",
-      "ref": "PP-2026-0033",
-      "measure": "DILG LGC RevAmP consolidated reform proposals / Copy of Consolidation of Proposed Amendments to the LGC",
-      "title": "DILG LGC RevAmP Consolidated Reform Proposals",
-      "area": "Local governance",
-      "sender": "DILG BLGD-LDPD / ULAP Secretariat forward",
-      "senderType": "National Government Agency",
-      "office": "Department of the Interior and Local Government - Bureau of Local Government Development",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "study",
-      "summary": "DILG BLGD requested LGU Pillar endorsement of consolidated LGC RevAmP reform proposals. Accessible source matrix includes planning professionalization, barangay digital services, DRRM staffing, HR/PS-cap, fiscal, environmental, and service-delivery proposals. ULAP issue is to support LGC reform subject to LGU validation, local autonomy, fiscal-impact review, phased implementation, and no unfunded mandates.",
-      "requestedAction": "Endorse / coordinate with leagues",
-      "recommendation": "Conditional endorsement for further structured vetting, subject to LGU validation, fiscal-impact review, protection of local autonomy, phased implementation, and avoidance of unfunded mandates.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
-    },
-    {
-      "id": "pp-2026-0034",
-      "ref": "HB 7707",
-      "measure": "HB 7707 - Local Tax and Fee Exemption for Micro Enterprises Act",
-      "title": "Local Tax and Fee Exemption for Micro Enterprises Act",
-      "area": "Fiscal decentralization",
-      "sender": "House Committee on Micro, Small and Medium Enterprise Development / ULAP Secretariat forward",
-      "senderType": "Congress / House",
-      "office": "House of Representatives - Committee on Micro, Small and Medium Enterprise Development",
-      "priority": "Medium (≤7 days)",
-      "status": "For Internal Review",
-      "position": "amend",
-      "summary": "House MSME Committee requested comments/recommendations on HB 7707. The bill exempts micro enterprises from local business taxes, business permit/license fees, and local regulatory fees and charges. ULAP issue is to support microenterprise formalization while revising blanket exemptions to preserve LGU fiscal autonomy, cost recovery, regulatory capacity, and LGU participation in the IRR.",
-      "requestedAction": "Comment / annotate draft bill",
-      "recommendation": "Support objective but recommend substantial amendments to protect LGU fiscal autonomy, preserve regulatory cost recovery, require fiscal safeguards, and include ULAP/LGU leagues in IRR development.",
-      "received": "2026-04-16T09:00:00+08:00",
-      "deadline": "2026-07-13T17:00:00+08:00",
-      "signoffs": [],
-      "notes": [],
-      "docs": []
     }
   ];
 
   // ---------- state / persistence ----------
-  var KEY = "ulap_neb_portal_v4";
+  var KEY = "ulap_neb_portal_v5";
   var state = load();
 
+  // Always render the current registry (SEED) content — titles, statuses, positions, etc. —
+  // and only carry over what a visitor actually did in their browser (sign-offs, notes,
+  // uploads, any papers the Secretariat submitted). This way code/data updates always show
+  // up immediately; nobody's in-progress approvals get silently stuck on an old snapshot.
   function load() {
-    try {
-      var raw = localStorage.getItem(KEY);
-      if (raw) { var p = JSON.parse(raw); if (p && p.papers) return normalize(p); }
-    } catch (e) {}
-    return normalize({ papers: JSON.parse(JSON.stringify(SEED)), role: "neb", me: "", required: DEFAULT_REQUIRED });
+    var saved = null;
+    try { var raw = localStorage.getItem(KEY); if (raw) saved = JSON.parse(raw); } catch (e) {}
+    var fresh = JSON.parse(JSON.stringify(SEED));
+    if (saved && Array.isArray(saved.papers)) {
+      var byId = {};
+      saved.papers.forEach(function (p) { byId[p.id] = p; });
+      fresh.forEach(function (p) {
+        var old = byId[p.id];
+        if (!old) return;
+        p.signoffs = old.signoffs || [];
+        p.notes = old.notes || [];
+        p.docs = old.docs || [];
+        if (old.status === "Submitted") p.status = "Submitted";
+      });
+      var freshIds = {}; fresh.forEach(function (p) { freshIds[p.id] = 1; });
+      saved.papers.forEach(function (p) { if (!freshIds[p.id]) fresh.push(p); }); // Secretariat-submitted extras
+    }
+    return normalize({
+      papers: fresh,
+      role: (saved && saved.role) || "neb",
+      me: (saved && saved.me) || "",
+      required: (saved && typeof saved.required === "number") ? saved.required : DEFAULT_REQUIRED
+    });
   }
   function normalize(st) {
     if (typeof st.required !== "number") st.required = DEFAULT_REQUIRED;
@@ -1705,10 +1762,11 @@
 
   var PRIORITY_ORDER = ["Critical", "Urgent", "High", "Medium", "Routine"];
   function priorityMeta(p) {
-    var name = String(p.priority || "").split(" (")[0].trim() || "Medium";
-    var map = { Critical: "pr-crit", Urgent: "pr-urg", High: "pr-high", Medium: "pr-med", Routine: "pr-rout" };
-    var rank = PRIORITY_ORDER.indexOf(name);
-    return { name: name, cls: map[name] || "pr-med", rank: rank < 0 ? 3 : rank };
+    var raw = String(p.priority || "").split(" (")[0].trim() || "Medium";
+    var map = { Critical: "pr-high", Urgent: "pr-urg", High: "pr-high", Medium: "pr-med", Routine: "pr-rout" };
+    var rank = PRIORITY_ORDER.indexOf(raw);
+    var display = raw === "Critical" ? "High" : raw; // "Critical" is shown to readers as "High priority"
+    return { name: display, cls: map[raw] || "pr-med", rank: rank < 0 ? 3 : rank };
   }
 
   function renderStats() {
@@ -1868,9 +1926,14 @@
     if (t === "docs") renderDocs(p);
   }
 
+  function confidentialBanner() {
+    return '<div class="confid-banner"><strong>Confidential — ULAP internal document.</strong> Not for circulation without NEB Board approval.</div>';
+  }
+
   function renderDraft(p) {
     var pos = POS[p.position];
-    var hl = '<div class="hl-grid">'
+    var hl = confidentialBanner()
+      + '<div class="hl-grid">'
       + hlItem("ULAP Position", '<span class="pos-tag ' + pos[0] + '">' + pos[1] + '</span>')
       + hlItem("Priority", '<span class="pr-chip ' + priorityMeta(p).cls + '"><span class="pd"></span>' + esc(priorityMeta(p).name) + '</span>')
       + hlItem("Policy Area", esc(p.area))
@@ -2078,7 +2141,8 @@
     }).join("");
 
     $("#paneDocs").innerHTML =
-      draftRow
+      confidentialBanner()
+      + draftRow
       + (p.docs.length ? files : (dp ? '' : '<div class="empty" style="padding:24px 10px"><div style="font-size:13.5px">No supporting documents attached yet.</div></div>'))
       + '<div class="doc-drop" id="roomDrop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4m0 0L8 8m4-4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>'
       + '<p>Attach a supporting document</p><small>Proponents and the Secretariat may upload PDF, DOCX, or XLSX files</small>'
@@ -2122,13 +2186,12 @@
           var sig = s.sig ? '<img class="rc-sig" src="' + s.sig + '" alt="signature of ' + esc(s.name) + '">' : '';
           var canRemove = state.role === "secretariat" || (myName() && String(s.name).trim().toLowerCase() === myName().toLowerCase());
           return '<div class="rc-row">'
-            + '<div class="rc-person"><span class="rc-name">' + esc(s.name) + '</span>'
-            + (s.title ? '<span class="rc-title">' + esc(s.title) + '</span>' : '')
-            + '<span class="rc-time">signed ' + timeAgo(s.when) + '</span></div>'
+            + '<div class="rc-line1"><span class="rc-name">' + esc(s.name) + '</span>'
+            + '<span class="rc-status ' + (ok ? "rc-approve" : "rc-disapprove") + '">' + (ok ? IC.check + "Approved" : IC.x + "Disapproved") + '</span></div>'
+            + '<div class="rc-line2"><span class="rc-sub">' + (s.title ? esc(s.title) + ' · ' : '') + 'signed ' + timeAgo(s.when) + '</span>'
             + '<div class="rc-right">' + sig
-            + '<span class="rc-status ' + (ok ? "rc-approve" : "rc-disapprove") + '">' + (ok ? IC.check + "Approved" : IC.x + "Disapproved") + '</span>'
             + (canRemove ? '<button class="rc-del" data-del="' + idx + '" aria-label="Remove sign-off">&times;</button>' : '')
-            + '</div></div>';
+            + '</div></div></div>';
         }).join("")
       : '<div class="rc-empty">No sign-offs yet. When a board member approves, they enter their name and sign here — on their phone or computer.</div>';
 
@@ -2260,7 +2323,7 @@
     save();
     var after = effectiveStatus(p);
     var wasApprove = signCtx.decision === "approve";
-    closeSignoff(); renderRoom(); renderStats(); renderDocket(); renderWhoami();
+    closeSignoff(); renderRoom(); renderStats(); renderDocket();
     toast(wasApprove ? "Approved — your sign-off is recorded" : "Disapproval recorded", wasApprove ? "good" : "");
     if (prev !== "Approved" && after === "Approved") setTimeout(function () { toast("Required approvals reached — endorsed by the NEB", "good"); }, 750);
   }
@@ -2278,34 +2341,20 @@
   // ===================================================================
   //  role + seat controls
   // ===================================================================
-  function renderWhoami() {
-    var el = $("#whoami"); if (!el) return;
-    var n = myName();
-    el.innerHTML = n
-      ? '<span class="pen">&#9998;</span>' + esc(n)
-      : '<span class="lbl">Set your name</span>';
-    el.style.display = state.role === "neb" ? "" : "none";
-  }
-  function promptName() {
-    var n = window.prompt("Enter the name you sign off with (this is the name shown on your approvals):", myName());
-    if (n != null) { state.me = n.trim(); save(); renderWhoami(); renderStats(); renderDocket(); if (currentId) renderRoom(); }
-  }
   function applyRole() {
     portal.setAttribute("data-role", state.role);
     $("#roleNeb").classList.toggle("on", state.role === "neb");
     $("#roleSec").classList.toggle("on", state.role === "secretariat");
     $("#submitBtn").style.display = state.role === "secretariat" ? "inline-flex" : "none";
-    renderWhoami();
     $("#viewTitle").textContent = state.role === "secretariat" ? "Position Paper Registry — Secretariat" : "Position Papers for NEB Approval";
     $("#viewSub").textContent = state.role === "secretariat"
       ? "Submit new papers to the board, attach supporting documents, respond to revision notes, and set how many approvals each measure needs."
-      : "Review the draft, ask the Q&I assistant, leave revision notes, and sign off. Each member records their approval with their name and signature.";
+      : "Review the draft, ask the Q&I assistant, leave revision notes, and sign off.";
   }
   function setRole(r) { state.role = r; save(); applyRole(); renderStats(); renderDocket(); if (currentId) renderRoom(); }
 
   $("#roleNeb").addEventListener("click", function () { setRole("neb"); });
   $("#roleSec").addEventListener("click", function () { setRole("secretariat"); });
-  $("#whoami").addEventListener("click", promptName);
 
   // ===================================================================
   //  submit modal
