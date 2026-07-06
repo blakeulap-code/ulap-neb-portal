@@ -284,6 +284,12 @@
   .draft-doc .lead { font-size: 14.5px; color: var(--navy-ink); font-style: normal; font-weight: 600; line-height: 1.4; }
   .draft-doc .lead .lead-sub { font-weight: 400; font-size: 12.5px; color: var(--muted); }
   .draft-note { margin-top: 22px; padding: 13px 16px; background: var(--warn-soft); border: 1px solid #efd6ad; border-radius: 8px; font-size: 13px; color: #7a531a; line-height: 1.5; }
+  .draft-note.ok { background: var(--good-soft); border-color: #bfe0cc; color: #1a6b3c; }
+  .draft-actions { display: flex; gap: 10px; margin: 2px 0 22px; flex-wrap: wrap; }
+  .draft-actions .btn svg { width: 15px; height: 15px; }
+  .file-row.primary { border-color: var(--gold); background: #FCFAF2; }
+  .file-ic.draft { background: linear-gradient(160deg, #f6edd4, #e9d9ad); }
+  .file-ic.draft .ext { background: var(--gold-deep); }
 
   /* Q&I */
   .qi-intro { background: linear-gradient(180deg, #fff, #FAFBFD); border: 1px solid var(--hair); border-radius: 9px; padding: 16px 18px; margin-bottom: 16px; display: flex; gap: 13px; }
@@ -1846,7 +1852,7 @@
     var p = paper(currentId);
     renderDraft(p); renderRail(p);
     $("#tcNotes").textContent = p.notes.length;
-    $("#tcDocs").textContent = p.docs.length;
+    $("#tcDocs").textContent = p.docs.length + (hasDraft(p) ? 1 : 0);
     if (currentTab === "qi") renderQi(p);
     if (currentTab === "notes") renderNotes(p);
     if (currentTab === "docs") renderDocs(p);
@@ -1887,14 +1893,25 @@
       + sec("Fiscal Implications", para(p.fiscalImpact))
       + sec("Amendments / Safeguards Sought", list(p.amendments));
 
-    var uploadNote = (p.docs && p.docs.length)
-      ? '<div class="draft-note">The full drafted position paper is attached under the <b>Documents</b> tab.</div>'
-      : '<div class="draft-note">This record captures the request and ULAP\'s recommended position. The full drafted position paper will be attached under the <b>Documents</b> tab by the Secretariat.</div>';
+    var dp = draftPath(p);
+    var draftActions = dp
+      ? '<div class="draft-actions">'
+        + '<a class="btn primary sm" href="' + esc(officeView(draftAbs(p))) + '" target="_blank" rel="noopener">' + IC.doc + 'View full position paper</a>'
+        + '<a class="btn ghost sm" href="' + esc(dp) + '" download>Download (.docx)</a>'
+        + '</div>'
+      : '';
+
+    var uploadNote = dp
+      ? '<div class="draft-note ok">The full drafted ULAP position paper is wired to this record — open it with the buttons above or from the <b>Documents</b> tab.</div>'
+      : ((p.docs && p.docs.length)
+        ? '<div class="draft-note">The full drafted position paper is attached under the <b>Documents</b> tab.</div>'
+        : '<div class="draft-note">This record captures the request and ULAP\'s recommended position. The full drafted position paper will be attached under the <b>Documents</b> tab by the Secretariat.</div>');
 
     var body = '<div class="draft-doc">'
       + '<div class="doc-crest"><div class="org">UNION OF LOCAL AUTHORITIES OF THE PHILIPPINES</div><div class="kind">Position Paper Record — for NEB Approval</div></div>'
       + '<h2>' + esc(p.title) + '</h2>'
       + '<p class="lead">' + esc(p.measure || p.ref) + '<br><span class="lead-sub">Requesting office: ' + esc(p.sender) + '</span></p>'
+      + draftActions
       + sections
       + uploadNote
       + '</div>';
@@ -1903,6 +1920,12 @@
   function roman(n) { return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"][n - 1] || String(n); }
   function hlItem(k, v) { return '<div class="hl-item"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>'; }
   function hlItemFull(k, v) { return '<div class="hl-item full"><div class="k">' + k + '</div><div class="v" style="font-weight:400;line-height:1.6">' + v + '</div></div>'; }
+
+  // ---------- drafted position paper (real docx served alongside the site) ----------
+  function draftPath(p) { return p.draftFile || (/^pp-2026-\d+$/.test(p.id) ? "drafts/" + p.id + ".docx" : ""); }
+  function draftAbs(p) { var r = draftPath(p); if (!r) return ""; try { return new URL(r, location.href).href; } catch (e) { return r; } }
+  function officeView(url) { return "https://view.officeapps.live.com/op/view.aspx?src=" + encodeURIComponent(url); }
+  function hasDraft(p) { return !!draftPath(p); }
 
   // ---------- Q&I assistant ----------
   var qiHistory = {};
@@ -2039,6 +2062,14 @@
 
   // ---------- documents ----------
   function renderDocs(p) {
+    var dp = draftPath(p);
+    var draftRow = dp
+      ? '<div class="file-row primary"><div class="file-ic draft"><span class="ext">DOCX</span></div>'
+        + '<div class="fn"><b>ULAP Position Paper — full draft</b><small>' + esc(p.ref) + ' · the official drafted paper</small></div>'
+        + '<a class="btn sm ghost" href="' + esc(officeView(draftAbs(p))) + '" target="_blank" rel="noopener">View</a>'
+        + '<a class="btn sm ghost" href="' + esc(dp) + '" download>Download</a>'
+        + '</div>'
+      : '';
     var files = p.docs.map(function (f, idx) {
       return '<div class="file-row"><div class="file-ic"><span class="ext">' + esc(f.ext || "FILE") + '</span></div>'
         + '<div class="fn"><b>' + esc(f.name) + '</b><small>' + fmtSize(f.size) + (f.by ? ' · uploaded by ' + esc(f.by) : '') + '</small></div>'
@@ -2047,7 +2078,8 @@
     }).join("");
 
     $("#paneDocs").innerHTML =
-      (p.docs.length ? files : '<div class="empty" style="padding:24px 10px"><div style="font-size:13.5px">No supporting documents attached yet.</div></div>')
+      draftRow
+      + (p.docs.length ? files : (dp ? '' : '<div class="empty" style="padding:24px 10px"><div style="font-size:13.5px">No supporting documents attached yet.</div></div>'))
       + '<div class="doc-drop" id="roomDrop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4m0 0L8 8m4-4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>'
       + '<p>Attach a supporting document</p><small>Proponents and the Secretariat may upload PDF, DOCX, or XLSX files</small>'
       + '<input type="file" id="roomFiles" multiple style="display:none"></div>';
