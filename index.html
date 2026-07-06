@@ -1,0 +1,2381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ULAP → NEB Position Paper Portal</title>
+</head>
+<body>
+<style>
+  /* ============================================================
+     ULAP -> NEB Position Paper Approval Portal
+     Self-contained. Navy + heraldic gold institutional identity.
+     ============================================================ */
+  :root {
+    --navy-ink:    #0C1E3E;
+    --navy-panel:  #14294D;
+    --navy-line:   #24406e;
+    --navy-soft:   #1b3560;
+    --gold:        #C4A052;
+    --gold-bright: #D8B85E;
+    --gold-deep:   #9c7d33;
+    --paper:       #EEF1F6;
+    --paper-2:     #E4E9F1;
+    --card:        #FFFFFF;
+    --ink:         #0E1726;
+    --muted:       #5A6473;
+    --muted-2:     #8A93A3;
+    --hair:        #DBE1EA;
+    --good:        #1E7A46;
+    --good-soft:   #E5F1EA;
+    --bad:         #B23B3B;
+    --bad-soft:    #F6E7E7;
+    --warn:        #C7791A;
+    --warn-soft:   #FBEEDD;
+    --over:        #C0392B;
+    --display: "Avenir Next", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", "Roboto Mono", Menlo, Consolas, monospace;
+    --shadow-sm: 0 1px 2px rgba(12,30,62,.06), 0 2px 6px rgba(12,30,62,.05);
+    --shadow-md: 0 6px 20px rgba(12,30,62,.10), 0 2px 6px rgba(12,30,62,.06);
+    --shadow-lg: 0 24px 60px rgba(12,30,62,.28);
+    --r: 8px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  .portal {
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 100% -10%, rgba(196,160,82,.06), transparent 60%),
+      var(--paper);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-height: 1.5;
+  }
+  .portal *:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  ::selection { background: rgba(196,160,82,.28); }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    background:
+      linear-gradient(180deg, var(--navy-panel), var(--navy-ink));
+    color: #EAF0FA;
+    border-bottom: 3px solid var(--gold);
+    position: sticky; top: 0; z-index: 40;
+    box-shadow: 0 8px 30px rgba(8,20,44,.30);
+  }
+  .masthead-inner {
+    max-width: 1240px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .brand-logo { height: 42px; width: auto; flex: none; }
+  .brand-txt { min-width: 0; }
+  .brand-txt .eyebrow {
+    font-size: 9.5px; letter-spacing: 1.4px; text-transform: uppercase;
+    color: var(--gold-bright); font-weight: 700; margin-bottom: 3px;
+  }
+  .brand-txt .wordmark {
+    font-family: var(--display); font-size: 21px; font-weight: 700;
+    letter-spacing: -.2px; line-height: 1.02; color: #fff;
+  }
+  .brand-txt .subword {
+    font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: #9FB2D4; margin-top: 4px; font-weight: 600;
+  }
+  .masthead-spacer { flex: 1; }
+
+  .role-switch { display: flex; align-items: center; gap: 10px; }
+  .whoami {
+    background: rgba(255,255,255,.06); color: #EAF0FA; border: 1px solid rgba(196,160,82,.35);
+    border-radius: 7px; padding: 8px 13px; font-size: 12.5px; font-family: inherit; font-weight: 600;
+    max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: .15s;
+  }
+  .whoami:hover { border-color: var(--gold); background: rgba(196,160,82,.14); }
+  .whoami .pen { color: var(--gold-bright); margin-right: 6px; }
+  .whoami .lbl { color: #9FB2D4; font-weight: 600; }
+  .role-toggle { display: inline-flex; background: rgba(0,0,0,.22); border-radius: 8px; padding: 3px; border: 1px solid rgba(255,255,255,.10); }
+  .role-toggle button {
+    border: 0; background: transparent; color: #A9B8D6; padding: 7px 12px; border-radius: 6px;
+    font-size: 12px; font-weight: 600; letter-spacing: .2px; transition: .18s;
+  }
+  .role-toggle button.on { background: var(--gold); color: #241a04; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+
+  /* ---------- Layout ---------- */
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 26px 24px 80px; }
+
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+  .page-head h1 { font-family: var(--display); font-size: 27px; font-weight: 600; margin: 0; letter-spacing: .2px; color: var(--navy-ink); }
+  .page-head p { margin: 4px 0 0; color: var(--muted); font-size: 13.5px; max-width: 640px; }
+
+  .btn {
+    border: 1px solid var(--hair); background: #fff; color: var(--ink);
+    padding: 10px 16px; border-radius: 7px; font-size: 13px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 8px; transition: .15s; box-shadow: var(--shadow-sm);
+  }
+  .btn:hover { border-color: var(--navy-line); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn.primary { background: linear-gradient(180deg, var(--navy-panel), var(--navy-ink)); color: #fff; border-color: var(--navy-ink); }
+  .btn.primary:hover { background: var(--navy-ink); }
+  .btn.gold { background: linear-gradient(180deg, var(--gold-bright), var(--gold)); color: #241a04; border-color: var(--gold-deep); }
+  .btn.ghost { background: transparent; box-shadow: none; }
+  .btn svg { width: 15px; height: 15px; }
+  .btn.sm { padding: 7px 12px; font-size: 12px; }
+
+  /* ---------- Stat band ---------- */
+  .stat-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 26px; }
+  .pr-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; padding: 4px 9px; border-radius: 6px; white-space: nowrap; }
+  .pr-chip .pd { width: 6px; height: 6px; border-radius: 50%; }
+  .pr-crit { background: var(--bad-soft); color: var(--bad); } .pr-crit .pd { background: var(--bad); }
+  .pr-urg  { background: var(--warn-soft); color: #a5641a; } .pr-urg .pd { background: var(--warn); }
+  .pr-high { background: #FBF1DA; color: var(--gold-deep); } .pr-high .pd { background: var(--gold); }
+  .pr-med  { background: #EAF1FB; color: #3f5a86; } .pr-med .pd { background: #3f5a86; }
+  .pr-rout { background: #EEF1F6; color: var(--muted); } .pr-rout .pd { background: var(--muted-2); }
+  .stat {
+    background: var(--card); border: 1px solid var(--hair); border-radius: var(--r);
+    padding: 16px 16px 14px; position: relative; overflow: hidden; box-shadow: var(--shadow-sm);
+    animation: rise .5s cubic-bezier(.2,.7,.3,1) both;
+  }
+  .stat::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background: var(--navy-line); }
+  .stat.act::before { background: var(--gold); }
+  .stat.good::before { background: var(--good); }
+  .stat.over::before { background: var(--over); }
+  .stat .k { font-size: 10.5px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .stat .v { font-family: var(--display); font-size: 33px; font-weight: 600; margin-top: 6px; line-height: 1; font-variant-numeric: tabular-nums; color: var(--navy-ink); }
+  .stat.act .v { color: var(--gold-deep); }
+  .stat.good .v { color: var(--good); }
+  .stat.over .v { color: var(--over); }
+  .stat .d { font-size: 11.5px; color: var(--muted-2); margin-top: 7px; }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+  .search { position: relative; flex: 1; min-width: 220px; }
+  .search input {
+    width: 100%; border: 1px solid var(--hair); border-radius: 8px; background: #fff;
+    padding: 11px 14px 11px 38px; font-size: 13.5px; font-family: inherit; color: var(--ink); box-shadow: var(--shadow-sm);
+  }
+  .search input:focus { outline: none; border-color: var(--navy-line); box-shadow: 0 0 0 3px rgba(20,41,77,.10); }
+  .search svg { position: absolute; left: 13px; top: 12px; width: 15px; height: 15px; color: var(--muted-2); }
+  .filter {
+    appearance: none; -webkit-appearance: none;
+    background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' stroke='%235A6473' fill='none' stroke-width='1.5'/></svg>") no-repeat right 12px center;
+    border: 1px solid var(--hair); border-radius: 8px; padding: 10px 32px 10px 13px; font-size: 12.5px;
+    font-family: inherit; color: var(--ink); box-shadow: var(--shadow-sm);
+  }
+
+  /* ---------- Docket cards ---------- */
+  .docket { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+  .paper-card {
+    background: var(--card); border: 1px solid var(--hair); border-radius: var(--r);
+    padding: 0; box-shadow: var(--shadow-sm); cursor: pointer; transition: .18s;
+    display: flex; flex-direction: column; overflow: hidden; position: relative;
+    animation: rise .5s cubic-bezier(.2,.7,.3,1) both;
+  }
+  .paper-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--navy-line); }
+  .paper-card:hover .pc-title { color: var(--gold-deep); }
+  .pc-top { padding: 15px 17px 0; display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+  .pc-ref { font-family: var(--mono); font-size: 11.5px; color: var(--navy-line); font-weight: 600; letter-spacing: .3px; }
+  .pc-body { padding: 8px 17px 15px; flex: 1; }
+  .pc-title { font-family: var(--display); font-size: 16.5px; font-weight: 600; line-height: 1.28; color: var(--ink); transition: .15s; text-wrap: balance; margin-bottom: 9px; }
+  .pc-meta { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+  .pc-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted-2); }
+  .pc-foot { padding: 12px 17px; border-top: 1px solid var(--hair); background: #FAFBFD; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; letter-spacing: .3px; padding: 4px 9px; border-radius: 20px; text-transform: uppercase; white-space: nowrap; }
+  .badge .bd { width: 6px; height: 6px; border-radius: 50%; }
+  .b-review { background: #EEF2F8; color: #3f5a86; }
+  .b-review .bd { background: #3f5a86; }
+  .b-draft { background: #EEF1F6; color: #6b7686; }
+  .b-draft .bd { background: #8A93A3; }
+  .b-leadership { background: #F3ECFA; color: #6b4a9c; }
+  .b-leadership .bd { background: #6b4a9c; }
+  .b-approval { background: var(--warn-soft); color: #a5641a; }
+  .b-approval .bd { background: var(--warn); }
+  .b-approved { background: var(--good-soft); color: var(--good); }
+  .b-approved .bd { background: var(--good); }
+  .b-returned { background: var(--bad-soft); color: var(--bad); }
+  .b-returned .bd { background: var(--bad); }
+  .b-submitted { background: #E9EAF6; color: #4b478f; }
+  .b-submitted .bd { background: #4b478f; }
+
+  .pos-tag { font-size: 10.5px; font-weight: 700; letter-spacing: .3px; padding: 3px 8px; border-radius: 5px; border: 1px solid; text-transform: uppercase; }
+  .pos-support { color: var(--good); border-color: #bfe0cc; background: var(--good-soft); }
+  .pos-amend { color: #a5641a; border-color: #efd6ad; background: var(--warn-soft); }
+  .pos-oppose { color: var(--bad); border-color: #e9c3c3; background: var(--bad-soft); }
+  .pos-study { color: #4b478f; border-color: #cdcce8; background: #eeeef8; }
+
+  /* deadline chip */
+  .dl-chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; padding: 5px 9px; border-radius: 6px; }
+  .dl-chip svg { width: 12px; height: 12px; }
+  .dl-good { background: #EAF1FB; color: var(--navy-ink); }
+  .dl-warn { background: var(--warn-soft); color: #a5641a; }
+  .dl-over { background: var(--bad-soft); color: var(--over); }
+
+  /* approval mini meter */
+  .mini-roll { display: flex; align-items: center; gap: 10px; min-height: 24px; }
+  .mini-avs { display: flex; }
+  .mini-av { width: 24px; height: 24px; border-radius: 50%; background: var(--good); color: #fff; font-size: 9.5px; font-weight: 700; display: grid; place-items: center; border: 2px solid #fff; margin-left: -7px; }
+  .mini-av:first-child { margin-left: 0; }
+  .mini-more { width: 24px; height: 24px; border-radius: 50%; background: var(--paper-2); color: var(--muted); font-size: 9.5px; font-weight: 700; display: grid; place-items: center; border: 2px solid #fff; margin-left: -7px; }
+  .mini-count { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .mini-count b { color: var(--good); font-variant-numeric: tabular-nums; }
+  .mini-none { font-size: 12px; color: var(--muted-2); font-style: italic; }
+
+  .empty { text-align: center; padding: 70px 20px; color: var(--muted); }
+  .empty .seal { width: 64px; height: 64px; opacity: .5; margin-bottom: 14px; }
+
+  /* ---------- Reading room (overlay) ---------- */
+  .scrim { position: fixed; inset: 0; background: rgba(9,18,38,.55); backdrop-filter: blur(3px); z-index: 60; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .scrim.show { opacity: 1; pointer-events: auto; }
+  .room {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(1000px, 100%);
+    background: var(--paper); z-index: 61; box-shadow: var(--shadow-lg);
+    transform: translateX(100%); transition: transform .32s cubic-bezier(.3,.8,.3,1);
+    display: flex; flex-direction: column;
+  }
+  .room.show { transform: translateX(0); }
+  .room-head { background: linear-gradient(180deg, var(--navy-panel), var(--navy-ink)); color: #EAF0FA; padding: 18px 26px; border-bottom: 3px solid var(--gold); }
+  .room-head .rh-top { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+  .rh-ref { font-family: var(--mono); font-size: 12px; color: var(--gold-bright); font-weight: 600; letter-spacing: .4px; }
+  .rh-title { font-family: var(--display); font-size: 23px; font-weight: 600; line-height: 1.2; margin: 8px 0 0; color: #fff; text-wrap: balance; }
+  .rh-meta { display: flex; flex-wrap: wrap; gap: 7px 16px; margin-top: 12px; font-size: 12px; color: #A9B8D6; }
+  .rh-meta b { color: #EAF0FA; font-weight: 600; }
+  .close-x { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: #fff; width: 34px; height: 34px; border-radius: 8px; font-size: 18px; display: grid; place-items: center; flex: none; }
+  .close-x:hover { background: rgba(255,255,255,.16); }
+
+  .room-body { flex: 1; overflow-y: auto; display: grid; grid-template-columns: 1fr 320px; gap: 0; }
+  .room-main { padding: 0; border-right: 1px solid var(--hair); min-width: 0; }
+  .room-rail { background: #fff; }
+
+  .tabs { display: flex; gap: 2px; padding: 0 22px; background: #fff; border-bottom: 1px solid var(--hair); position: sticky; top: 0; z-index: 5; }
+  .tab { border: 0; background: transparent; padding: 14px 6px; margin-right: 18px; font-size: 13px; font-weight: 600; color: var(--muted); border-bottom: 2.5px solid transparent; position: relative; transition: .15s; }
+  .tab:hover { color: var(--ink); }
+  .tab.on { color: var(--navy-ink); border-bottom-color: var(--gold); }
+  .tab .tcount { font-family: var(--mono); font-size: 10.5px; background: var(--paper-2); color: var(--muted); border-radius: 10px; padding: 1px 6px; margin-left: 5px; vertical-align: 1px; }
+  .tabpane { padding: 24px 26px 40px; }
+  .tabpane:not(.on) { display: none; }
+
+  /* high-level info panel */
+  .hl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px; }
+  .hl-item { background: #fff; border: 1px solid var(--hair); border-radius: 7px; padding: 12px 14px; }
+  .hl-item .k { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted-2); font-weight: 700; }
+  .hl-item .v { font-size: 13.5px; color: var(--ink); margin-top: 4px; font-weight: 500; }
+  .hl-item.full { grid-column: 1 / -1; }
+  .hl-item .v.pos { display: inline-flex; }
+
+  .draft-doc { background: #fff; border: 1px solid var(--hair); border-radius: 8px; padding: 34px 40px; box-shadow: var(--shadow-sm); }
+  .draft-doc .doc-crest { text-align: center; padding-bottom: 20px; margin-bottom: 22px; border-bottom: 1.5px solid var(--hair); }
+  .draft-doc .doc-crest .seal { width: 46px; height: 46px; }
+  .draft-doc .doc-crest .org { font-family: var(--display); font-size: 13px; letter-spacing: .5px; color: var(--navy-ink); font-weight: 600; margin-top: 6px; }
+  .draft-doc .doc-crest .kind { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+  .draft-doc h2 { font-family: var(--display); font-size: 19px; color: var(--navy-ink); margin: 24px 0 8px; }
+  .draft-doc h2:first-of-type { margin-top: 0; }
+  .draft-doc h3 { font-size: 13.5px; margin: 18px 0 6px; color: var(--ink); }
+  .draft-doc p { font-size: 14px; line-height: 1.72; color: #26303f; margin: 0 0 13px; max-width: 68ch; }
+  .draft-doc ul { margin: 0 0 14px; padding-left: 20px; }
+  .draft-doc li { font-size: 14px; line-height: 1.65; color: #26303f; margin-bottom: 7px; }
+  .draft-doc .lead { font-size: 14.5px; color: var(--navy-ink); font-style: normal; font-weight: 600; line-height: 1.4; }
+  .draft-doc .lead .lead-sub { font-weight: 400; font-size: 12.5px; color: var(--muted); }
+  .draft-note { margin-top: 22px; padding: 13px 16px; background: var(--warn-soft); border: 1px solid #efd6ad; border-radius: 8px; font-size: 13px; color: #7a531a; line-height: 1.5; }
+
+  /* Q&I */
+  .qi-intro { background: linear-gradient(180deg, #fff, #FAFBFD); border: 1px solid var(--hair); border-radius: 9px; padding: 16px 18px; margin-bottom: 16px; display: flex; gap: 13px; }
+  .qi-orb { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, var(--navy-panel), var(--navy-ink)); display: grid; place-items: center; flex: none; border: 1px solid var(--gold-deep); }
+  .qi-orb svg { width: 20px; height: 20px; color: var(--gold-bright); }
+  .qi-intro h4 { margin: 0 0 3px; font-size: 14px; color: var(--navy-ink); }
+  .qi-intro p { margin: 0; font-size: 12.5px; color: var(--muted); }
+  .qi-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+  .qi-chip { border: 1px solid var(--hair); background: #fff; color: var(--navy-ink); font-size: 12px; font-weight: 500; padding: 7px 12px; border-radius: 20px; transition: .15s; }
+  .qi-chip:hover { border-color: var(--gold); background: var(--warn-soft); }
+  .qi-thread { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+  .qi-msg { display: flex; gap: 11px; animation: rise .3s ease both; }
+  .qi-msg .av { width: 30px; height: 30px; border-radius: 8px; flex: none; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  .qi-msg.you .av { background: var(--navy-ink); color: #fff; }
+  .qi-msg.ai .av { background: linear-gradient(135deg, var(--gold-bright), var(--gold)); color: #241a04; }
+  .qi-msg .bub { background: #fff; border: 1px solid var(--hair); border-radius: 10px; padding: 11px 14px; font-size: 13.5px; line-height: 1.6; color: var(--ink); max-width: 82%; }
+  .qi-msg.you .bub { background: var(--navy-ink); color: #EAF0FA; border-color: var(--navy-ink); }
+  .qi-msg .bub .src { display: block; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--hair); font-size: 11px; color: var(--muted-2); }
+  .qi-msg .bub strong { color: var(--navy-ink); }
+  .qi-msg.you .bub strong { color: #fff; }
+  .qi-msg .bub ul { margin: 7px 0 3px; padding-left: 18px; }
+  .qi-msg .bub li { margin-bottom: 4px; }
+  .typing { display: inline-flex; gap: 4px; padding: 4px 2px; }
+  .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted-2); animation: blink 1.2s infinite; }
+  .typing i:nth-child(2){ animation-delay: .2s; } .typing i:nth-child(3){ animation-delay: .4s; }
+  .qi-form { display: flex; gap: 9px; position: sticky; bottom: 0; }
+  .qi-form input { flex: 1; border: 1px solid var(--hair); border-radius: 8px; padding: 12px 14px; font-size: 13.5px; font-family: inherit; box-shadow: var(--shadow-sm); }
+  .qi-form input:focus { outline: none; border-color: var(--navy-line); box-shadow: 0 0 0 3px rgba(20,41,77,.10); }
+
+  /* notes */
+  .note { background: #fff; border: 1px solid var(--hair); border-radius: 9px; padding: 13px 15px; margin-bottom: 11px; }
+  .note .nh { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .note .who { font-size: 12.5px; font-weight: 700; color: var(--navy-ink); }
+  .note .who span { font-weight: 500; color: var(--muted); font-size: 11px; }
+  .note .when { font-family: var(--mono); font-size: 11px; color: var(--muted-2); }
+  .note .body { font-size: 13.5px; line-height: 1.6; color: #26303f; }
+  .note.resolved { opacity: .62; }
+  .note.resolved .body { text-decoration: line-through; text-decoration-color: var(--muted-2); }
+  .note-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; padding: 2px 7px; border-radius: 4px; }
+  .nt-revision { background: var(--warn-soft); color: #a5641a; }
+  .nt-query { background: #EEF2F8; color: #3f5a86; }
+  .nt-endorse { background: var(--good-soft); color: var(--good); }
+  .note-compose { background: #fff; border: 1px solid var(--hair); border-radius: 9px; padding: 13px; margin-top: 4px; }
+  .note-compose textarea { width: 100%; border: 1px solid var(--hair); border-radius: 7px; padding: 10px 12px; font-family: inherit; font-size: 13.5px; resize: vertical; min-height: 66px; }
+  .note-compose textarea:focus { outline: none; border-color: var(--navy-line); box-shadow: 0 0 0 3px rgba(20,41,77,.10); }
+  .note-compose .nc-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 9px; gap: 10px; }
+  .seg { display: inline-flex; border: 1px solid var(--hair); border-radius: 7px; overflow: hidden; }
+  .seg button { border: 0; background: #fff; padding: 6px 11px; font-size: 11.5px; font-weight: 600; color: var(--muted); border-right: 1px solid var(--hair); }
+  .seg button:last-child { border-right: 0; }
+  .seg button.on { background: var(--navy-ink); color: #fff; }
+
+  /* documents */
+  .doc-drop { border: 1.5px dashed var(--navy-line); border-radius: 10px; padding: 26px; text-align: center; background: #fff; transition: .15s; margin-bottom: 16px; }
+  .doc-drop.hot { background: var(--warn-soft); border-color: var(--gold); }
+  .doc-drop svg { width: 26px; height: 26px; color: var(--navy-line); }
+  .doc-drop p { margin: 8px 0 3px; font-size: 13.5px; color: var(--ink); font-weight: 600; }
+  .doc-drop small { color: var(--muted); font-size: 12px; }
+  .file-row { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid var(--hair); border-radius: 8px; padding: 11px 13px; margin-bottom: 9px; }
+  .file-ic { width: 34px; height: 40px; flex: none; border-radius: 4px; background: linear-gradient(160deg, #eef2f8, #dce4f0); border: 1px solid var(--hair); position: relative; display: grid; place-items: end center; }
+  .file-ic .ext { font-family: var(--mono); font-size: 8px; font-weight: 700; color: #fff; background: var(--navy-line); border-radius: 2px; padding: 1px 3px; margin-bottom: 4px; letter-spacing: .3px; }
+  .file-row .fn { flex: 1; min-width: 0; }
+  .file-row .fn b { display: block; font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-row .fn small { color: var(--muted); font-size: 11.5px; }
+
+  /* ---------- Right rail: approval console ---------- */
+  .rail-pad { padding: 22px 20px; display: flex; flex-direction: column; gap: 18px; }
+  .console { background: #fff; border: 1px solid var(--hair); border-radius: 11px; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .console-head { background: linear-gradient(180deg, #FAFBFD, #F1F4F9); padding: 13px 16px; border-bottom: 1px solid var(--hair); }
+  .console-head .t { font-size: 11px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .console-head .st { font-family: var(--display); font-size: 15px; color: var(--navy-ink); margin-top: 3px; font-weight: 600; }
+  .console-body { padding: 16px; }
+
+  .rollcall { }
+  .roll-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+  .roll-top .big { font-family: var(--display); font-size: 30px; font-weight: 600; color: var(--navy-ink); font-variant-numeric: tabular-nums; }
+  .roll-top .big b { color: var(--good); }
+  .roll-top .need { font-size: 11.5px; color: var(--muted); }
+  .roll-bar { height: 8px; border-radius: 5px; background: var(--paper-2); overflow: hidden; display: flex; margin: 8px 0 4px; }
+  .roll-bar .fa { background: var(--good); height: 100%; transition: width .5s cubic-bezier(.3,.8,.3,1); }
+  .roll-bar .fd { background: var(--bad); height: 100%; transition: width .5s; }
+  .thresh-note { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .thresh-note.met { color: var(--good); font-weight: 600; }
+
+  .rc-list { display: flex; flex-direction: column; max-height: 380px; overflow-y: auto; }
+  .rc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--hair); }
+  .rc-row:last-child { border-bottom: 0; }
+  .rc-person { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .rc-name { font-size: 12.5px; color: var(--ink); font-weight: 700; line-height: 1.2; }
+  .rc-title { font-size: 11px; color: var(--muted); }
+  .rc-time { font-size: 10px; color: var(--muted-2); margin-top: 1px; }
+  .rc-right { display: flex; align-items: center; gap: 8px; flex: none; }
+  .rc-sig { height: 26px; width: auto; max-width: 76px; object-fit: contain; opacity: .9; }
+  .rc-status { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .2px; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+  .rc-status svg { width: 11px; height: 11px; }
+  .rc-approve { background: var(--good-soft); color: var(--good); }
+  .rc-disapprove { background: var(--bad-soft); color: var(--bad); }
+  .rc-del { border: 0; background: transparent; color: var(--muted-2); font-size: 16px; line-height: 1; padding: 2px 5px; border-radius: 4px; }
+  .rc-del:hover { background: var(--bad-soft); color: var(--bad); }
+  .rc-empty { padding: 20px 16px; font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+
+  .req-ctl { display: inline-flex; align-items: center; gap: 5px; }
+  .req-ctl b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .req-step { border: 1px solid var(--hair); background: #fff; width: 20px; height: 20px; border-radius: 5px; font-size: 13px; line-height: 1; color: var(--navy-ink); font-weight: 700; display: inline-grid; place-items: center; }
+  .req-step:hover { border-color: var(--navy-line); background: var(--paper); }
+  .linkbtn { border: 0; background: transparent; color: var(--navy-line); font-weight: 600; font-size: inherit; text-decoration: underline; padding: 0; cursor: pointer; }
+  .linkbtn:hover { color: var(--gold-deep); }
+
+  .vote-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+  .vote-btn { border: 1.5px solid var(--hair); background: #fff; border-radius: 8px; padding: 11px; font-size: 12.5px; font-weight: 700; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 5px; transition: .15s; }
+  .vote-btn svg { width: 17px; height: 17px; }
+  .vote-btn.approve:hover, .vote-btn.approve.on { border-color: var(--good); background: var(--good-soft); color: var(--good); }
+  .vote-btn.disapprove:hover, .vote-btn.disapprove.on { border-color: var(--bad); background: var(--bad-soft); color: var(--bad); }
+  .vote-btn.on { box-shadow: inset 0 0 0 1px currentColor; }
+  .vote-mini { display: flex; gap: 8px; margin-top: 8px; }
+  .vote-mini button { flex: 1; border: 1px solid var(--hair); background: #fff; border-radius: 7px; padding: 7px; font-size: 11.5px; font-weight: 600; color: var(--muted); }
+  .vote-mini button.on { background: #eef1f6; color: var(--ink); border-color: var(--navy-line); }
+  .your-vote { font-size: 11.5px; color: var(--muted); text-align: center; margin-top: 10px; line-height: 1.5; }
+  .your-vote b { color: var(--ink); }
+
+  /* sign-off modal */
+  .btn.goodbtn { background: linear-gradient(180deg, #2a9256, var(--good)); color: #fff; border-color: #16643a; }
+  .btn.goodbtn:hover { background: var(--good); }
+  .btn.badbtn { background: linear-gradient(180deg, #c24b4b, var(--bad)); color: #fff; border-color: #922f2f; }
+  .btn.badbtn:hover { background: var(--bad); }
+  .so-modal { width: min(540px, 100%); }
+  .so-ref { font-size: 13px; color: var(--ink); background: var(--paper); border: 1px solid var(--hair); border-radius: 7px; padding: 10px 12px; margin-bottom: 16px; line-height: 1.4; font-weight: 500; }
+  .so-decision { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .so-decision button { border: 1.5px solid var(--hair); background: #fff; border-radius: 8px; padding: 11px; font-size: 13px; font-weight: 700; color: var(--muted); transition: .15s; }
+  .so-decision button[data-d="approve"].on { border-color: var(--good); background: var(--good-soft); color: var(--good); }
+  .so-decision button[data-d="disapprove"].on { border-color: var(--bad); background: var(--bad-soft); color: var(--bad); }
+  .req-star { color: var(--bad); }
+  .so-modal label.so-typecheck { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 500; color: var(--muted); text-transform: none; letter-spacing: 0; margin: 0 0 10px; cursor: pointer; }
+  .so-modal .so-typecheck input { width: 16px; height: 16px; margin: 0; flex: none; }
+  .so-pad-wrap { position: relative; border: 1.5px dashed var(--navy-line); border-radius: 9px; background: #fff; overflow: hidden; }
+  .so-pad { display: block; width: 100%; height: 130px; touch-action: none; cursor: crosshair; }
+  .so-pad-hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font-size: 12px; color: var(--muted-2); pointer-events: none; }
+
+  .cd-card { background: var(--navy-ink); border-radius: 11px; padding: 16px; color: #EAF0FA; position: relative; overflow: hidden; }
+  .cd-card::after { content:""; position: absolute; right:-30px; top:-30px; width: 110px; height: 110px; border-radius: 50%; border: 1px solid rgba(196,160,82,.25); }
+  .cd-card .t { font-size: 10.5px; letter-spacing: 1.1px; text-transform: uppercase; color: #9FB2D4; font-weight: 700; }
+  .cd-card .big-cd { font-family: var(--mono); font-size: 27px; font-weight: 600; margin: 8px 0 2px; font-variant-numeric: tabular-nums; letter-spacing: .5px; }
+  .cd-card .big-cd.warn { color: var(--gold-bright); }
+  .cd-card .big-cd.over { color: #F0A6A0; }
+  .cd-card .big-cd.good { color: #8FE0AE; }
+  .cd-card .to { font-size: 12px; color: #A9B8D6; margin-top: 8px; line-height: 1.4; }
+  .cd-card .to b { color: #EAF0FA; }
+
+  .rail-mini { background: #fff; border: 1px solid var(--hair); border-radius: 10px; padding: 14px; }
+  .rail-mini .t { font-size: 10.5px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 9px; }
+  .kv { display: flex; justify-content: space-between; font-size: 12.5px; padding: 5px 0; border-bottom: 1px dashed var(--hair); }
+  .kv:last-child { border-bottom: 0; }
+  .kv .k { color: var(--muted); } .kv .v { color: var(--ink); font-weight: 600; text-align: right; }
+
+  .sec-only { display: none; }
+  .portal[data-role="secretariat"] .sec-only { display: block; }
+  .portal[data-role="secretariat"] .sec-only-f { display: flex; }
+  .neb-only { display: block; }
+  .portal[data-role="secretariat"] .neb-note { display: block; }
+
+  /* ---------- Modal (submit) ---------- */
+  .modal-scrim { position: fixed; inset: 0; background: rgba(9,18,38,.55); backdrop-filter: blur(3px); z-index: 70; display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
+  .modal-scrim.show { display: flex; }
+  .modal { background: var(--paper); border-radius: 12px; width: min(680px, 100%); box-shadow: var(--shadow-lg); animation: rise .3s ease both; }
+  .modal-head { background: linear-gradient(180deg, var(--navy-panel), var(--navy-ink)); color: #fff; padding: 18px 24px; border-radius: 12px 12px 0 0; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; align-items: center; }
+  .modal-head h3 { font-family: var(--display); font-size: 19px; margin: 0; }
+  .modal-body { padding: 22px 24px; }
+  .fld { margin-bottom: 15px; }
+  .fld label { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .fld input, .fld select, .fld textarea { width: 100%; border: 1px solid var(--hair); border-radius: 7px; padding: 10px 12px; font-family: inherit; font-size: 13.5px; background: #fff; }
+  .fld textarea { resize: vertical; min-height: 90px; }
+  .fld input:focus, .fld select:focus, .fld textarea:focus { outline: none; border-color: var(--navy-line); box-shadow: 0 0 0 3px rgba(20,41,77,.10); }
+  .fld-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .modal-foot { padding: 16px 24px 22px; display: flex; justify-content: flex-end; gap: 10px; }
+
+  /* ---------- Toast ---------- */
+  .toast-wrap { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 90; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .toast { background: var(--navy-ink); color: #fff; padding: 12px 18px; border-radius: 9px; font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; border-left: 3px solid var(--gold); animation: toastin .3s ease both; }
+  .toast svg { width: 16px; height: 16px; color: var(--gold-bright); }
+  .toast.good { border-left-color: var(--good); } .toast.good svg { color: #8FE0AE; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes toastin { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes blink { 0%, 60%, 100% { opacity: .3; } 30% { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+
+  @media (max-width: 980px) {
+    .room-body { grid-template-columns: 1fr; }
+    .room-main { border-right: 0; }
+    .room-rail { border-top: 1px solid var(--hair); }
+    .stat-band { grid-template-columns: repeat(2, 1fr); }
+    .clock { display: none; }
+  }
+  @media (max-width: 620px) {
+    .wrap { padding: 18px 15px 60px; }
+    .masthead-inner { flex-wrap: wrap; gap: 10px; padding: 12px 15px; }
+    .role-switch { order: 3; width: 100%; }
+    .seat-pick { flex: 1; max-width: none; }
+    .docket { grid-template-columns: 1fr; }
+    .hl-grid { grid-template-columns: 1fr; }
+    .draft-doc { padding: 22px 18px; }
+    .fld-row { grid-template-columns: 1fr; }
+    .seats { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>
+
+<div class="portal" id="portal" data-role="neb">
+
+  <!-- ============ MASTHEAD ============ -->
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">
+        <!-- ULAP's official logo can be placed here later, e.g. <img class="brand-logo" src="ulap-logo.png" alt="ULAP"> -->
+        <div class="brand-txt">
+          <div class="eyebrow">Union of Local Authorities of the Philippines</div>
+          <div class="wordmark">Position Paper Portal</div>
+          <div class="subword">National Executive Board <span style="color:var(--gold-bright)">&rsaquo;</span> Approval Registry</div>
+        </div>
+      </div>
+      <div class="masthead-spacer"></div>
+      <div class="role-switch">
+        <button class="whoami" id="whoami" title="The name you sign off with">Set your name</button>
+        <div class="role-toggle" role="tablist" aria-label="Switch role">
+          <button id="roleNeb" class="on" role="tab">NEB Member</button>
+          <button id="roleSec" role="tab">Secretariat</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="page-head">
+      <div>
+        <h1 id="viewTitle">Position Papers for NEB Approval</h1>
+        <p id="viewSub">Review the draft, ask the Q&amp;I assistant, leave revision notes, and cast your vote. The board roll call shows exactly which members have approved each paper.</p>
+      </div>
+      <button class="btn gold sec-only-f" id="submitBtn" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Submit a Position Paper
+      </button>
+    </div>
+
+    <!-- stat band -->
+    <section class="stat-band" id="statBand"></section>
+
+    <!-- toolbar -->
+    <div class="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="searchBox" type="search" placeholder="Search by bill number, title, or policy area…" aria-label="Search position papers">
+      </div>
+      <select class="filter" id="fStatus" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        <option value="For Approval">For Approval</option>
+        <option value="For Leadership Decision">For Leadership Decision</option>
+        <option value="Draft Prepared">Draft Prepared</option>
+        <option value="For Internal Review">For Internal Review</option>
+        <option value="Approved">Approved by NEB</option>
+        <option value="Submitted">Submitted</option>
+      </select>
+      <select class="filter" id="fArea" aria-label="Filter by policy area"></select>
+      <select class="filter" id="fSort" aria-label="Sort">
+        <option value="approval">Sort: Awaiting your vote</option>
+        <option value="progress">Sort: Approval progress</option>
+        <option value="priority">Sort: Priority</option>
+      </select>
+    </div>
+
+    <section class="docket" id="docket"></section>
+  </main>
+
+  <!-- ============ READING ROOM ============ -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="room" id="room" aria-hidden="true">
+    <div class="room-head">
+      <div class="rh-top">
+        <div style="min-width:0">
+          <span class="rh-ref" id="rmRef"></span>
+          <h2 class="rh-title" id="rmTitle"></h2>
+        </div>
+        <button class="close-x" id="closeRoom" aria-label="Close">&times;</button>
+      </div>
+      <div class="rh-meta" id="rmMeta"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab on" data-tab="draft">Draft Paper</button>
+      <button class="tab" data-tab="qi">Q&amp;I Assistant</button>
+      <button class="tab" data-tab="notes">Revision Notes <span class="tcount" id="tcNotes">0</span></button>
+      <button class="tab" data-tab="docs">Documents <span class="tcount" id="tcDocs">0</span></button>
+    </div>
+
+    <div class="room-body">
+      <div class="room-main">
+        <!-- DRAFT -->
+        <div class="tabpane on" data-pane="draft" id="paneDraft"></div>
+        <!-- Q&I -->
+        <div class="tabpane" data-pane="qi" id="paneQi"></div>
+        <!-- NOTES -->
+        <div class="tabpane" data-pane="notes" id="paneNotes"></div>
+        <!-- DOCS -->
+        <div class="tabpane" data-pane="docs" id="paneDocs"></div>
+      </div>
+
+      <div class="room-rail">
+        <div class="rail-pad" id="railPad"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ SUBMIT MODAL ============ -->
+  <div class="modal-scrim" id="modalScrim">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <h3 id="modalTitle">Submit a Position Paper to the NEB</h3>
+        <button class="close-x" id="closeModal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="fld">
+          <label for="mTitle">Title of the measure</label>
+          <input id="mTitle" placeholder="An Act …">
+        </div>
+        <div class="fld-row">
+          <div class="fld"><label for="mRef">Bill / reference no.</label><input id="mRef" placeholder="HB 0000 / SB 0000"></div>
+          <div class="fld"><label for="mArea">Policy area</label>
+            <select id="mArea">
+              <option>Local governance</option><option>Fiscal decentralization</option><option>Disaster resilience</option>
+              <option>Education</option><option>Health</option><option>Agriculture and food security</option>
+              <option>Environment and natural resources</option><option>Digital governance</option><option>Social protection</option>
+            </select>
+          </div>
+        </div>
+        <div class="fld-row">
+          <div class="fld"><label for="mSender">Proponent / requesting office</label><input id="mSender" placeholder="e.g. House Committee on Local Government"></div>
+          <div class="fld"><label for="mOffice">Submit to (relevant office)</label><input id="mOffice" placeholder="e.g. Senate Committee on Local Government"></div>
+        </div>
+        <div class="fld-row">
+          <div class="fld"><label for="mPriority">Priority</label>
+            <select id="mPriority"><option>Critical (same-day)</option><option>Urgent (≤2 days)</option><option selected>High (≤3 days)</option><option>Medium (≤7 days)</option><option>Routine (&gt;7 days)</option></select>
+          </div>
+          <div class="fld"><label for="mPos">ULAP position</label>
+            <select id="mPos"><option value="support">Support</option><option value="amend">Support with amendments</option><option value="oppose">Oppose</option><option value="study">Endorse for further study</option></select>
+          </div>
+        </div>
+        <div class="fld"><label for="mSummary">High-level summary (what the NEB sees first)</label><textarea id="mSummary" placeholder="Two or three sentences the board reads before opening the draft…"></textarea></div>
+        <div class="fld"><label for="mDraft">Draft position paper</label><textarea id="mDraft" placeholder="Paste the full draft. Use blank lines between paragraphs; start a heading line with '## '." style="min-height:130px"></textarea></div>
+        <div class="fld">
+          <label>Supporting documents</label>
+          <div class="doc-drop" id="mDrop">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4m0 0L8 8m4-4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            <p>Attach files</p><small id="mDropList">PDF, DOCX, XLSX — optional</small>
+            <input type="file" id="mFiles" multiple style="display:none">
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" id="cancelModal">Cancel</button>
+        <button class="btn primary" id="saveModal">Submit to NEB</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SIGN-OFF MODAL ============ -->
+  <div class="modal-scrim" id="soScrim">
+    <div class="modal so-modal" role="dialog" aria-modal="true" aria-labelledby="soHead">
+      <div class="modal-head">
+        <h3 id="soHead">Sign off</h3>
+        <button class="close-x" id="soClose" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="so-ref" id="soRef"></div>
+
+        <div class="fld">
+          <label>Your decision</label>
+          <div class="so-decision" id="soDecision">
+            <button type="button" data-d="approve">&#10003; Approve</button>
+            <button type="button" data-d="disapprove">&#10007; Disapprove</button>
+          </div>
+        </div>
+        <div class="fld">
+          <label for="soRoster">Select your name from the NEB</label>
+          <select id="soRoster" class="so-select"></select>
+        </div>
+        <div class="fld-row">
+          <div class="fld"><label for="soName">Your name <span class="req-star">*</span></label><input id="soName" placeholder="e.g. Gov. Maria Santos" autocomplete="name"></div>
+          <div class="fld"><label for="soRole">Title / LGU (optional)</label><input id="soRole" placeholder="e.g. Governor, Province of Cebu"></div>
+        </div>
+        <div class="fld">
+          <label>Signature</label>
+          <label class="so-typecheck"><input type="checkbox" id="soType"> Type my name as signature instead</label>
+          <div id="soPadWrap">
+            <div class="so-pad-wrap">
+              <canvas id="soPad" class="so-pad"></canvas>
+              <span class="so-pad-hint" id="soPadHint">Sign here with your finger or mouse</span>
+            </div>
+            <button type="button" class="linkbtn" id="soClear">Clear signature</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" id="soCancel">Cancel</button>
+        <button class="btn goodbtn" id="soConfirm">Confirm approval</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- utilities ----------
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
+  var NOW = new Date("2026-07-06T09:00:00+08:00").getTime(); // fixed "today" for deterministic demo; live clock ticks from real time offset
+  var REAL0 = Date.now();
+  function now() { return NOW + (Date.now() - REAL0); }
+  function daysFromNow(d) { return new Date(now() + d * 864e5); }
+  function iso(dt) { return new Date(dt).toISOString(); }
+
+  var SEAL = ""; // official ULAP logo intentionally not fabricated; drop a real asset into the masthead when available
+
+  // ---------- ULAP National Executive Board, 2026–2029 ----------
+  // Real roster (from the NEB governance list). Members pick themselves when signing off.
+  var ROSTER = [
+    { name: "Gov. Dakila Carlo E. Cua", title: "President" },
+    { name: "Gov. Reynaldo S. Tamayo, Jr.", title: "Chairman" },
+    { name: "Vice-Gov. Ma. Cristina M. Garcia", title: "Vice-Chairman" },
+    { name: "Mayor Ma. Josefina G. Belmonte", title: "Executive Vice-President" },
+    { name: "Mayor Francis M. Zamora", title: "1st Vice President – Luzon" },
+    { name: "Vice-Mayor Lady Julie Grace L. Baronda", title: "2nd Vice President – Visayas" },
+    { name: "BM. Dexter B. Yasay", title: "3rd Vice President – Mindanao" },
+    { name: "Vice-Gov. Hermilando I. Mandanas", title: "Secretary-General" },
+    { name: "Vice-Mayor Christine S. Garin", title: "Assistant Secretary-General" },
+    { name: "BM. Kerby J. Salazar", title: "Treasurer" },
+    { name: "Vice Mayor Anthony D. Suva, Jr.", title: "Assistant Treasurer" },
+    { name: "Mayor Faustino A. Dy, V.", title: "Auditor" },
+    { name: "BM. Ma. Katrina Jessica G. Dy", title: "Assistant Auditor" },
+    { name: "Mayor Oscar D. Tetangco, Jr.", title: "Public Relations Officer" },
+    { name: "Vice-Mayor Joyce B. Mariscal", title: "Assistant P.R.O." },
+    { name: "Vice-Mayor Maynard Francis R. Bumanglag", title: "Liaison Officer" },
+    { name: "BM. Romel R. Enriquez", title: "Assistant Liaison Officer" },
+    { name: "Coun. Atty. Raul R. Corro", title: "Legal Counsel" },
+    { name: "Coun. Benjie A. Abalos, III", title: "Chairman for Advocacy and Policy" },
+    { name: "BM. Martina L. Gimenez", title: "Chairman for Gender and Development" }
+  ];
+  // "required" = number of board approvals to endorse a paper (Secretariat-editable). Default: majority of the NEB.
+  var DEFAULT_REQUIRED = Math.floor(ROSTER.length / 2) + 1;
+
+  // ---------- seed papers ----------
+  var SEED = [
+    {
+      "id": "pp-2026-0035",
+      "ref": "HB 6084 +3",
+      "measure": "BIDANI bills - HB 6084, HB 4967, HB 3562, HB 666 and related measures",
+      "title": "BIDANI Bills",
+      "area": "Agriculture and food security",
+      "sender": "ULAP National Secretariat / House Committee referral",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "position": "amend",
+      "summary": "Request for ULAP position paper on Barangay Integrated Development Approach for Nutrition Improvement measures; submission-ready ULAP paper now linked for Board/ED approval.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support BIDANI subject to integration with existing local nutrition systems, funded implementation, clear LGU/barangay roles, data/privacy safeguards, and ULAP/LGU league participation in the IRR.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0036",
+      "ref": "PP-2026-0036",
+      "measure": "Proposed Ship Building Ship Repair Act and related House Bills",
+      "title": "Proposed Ship Building Ship Repair Act",
+      "area": "Infrastructure and transport",
+      "sender": "House Committee on Trade and Industry",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "position": "amend",
+      "summary": "Request for comments/position paper on shipbuilding and ship repair measures, with committee matrix and bill texts attached.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support the shipbuilding/ship repair policy subject to host-LGU consultation, protection of local land-use authority, environmental and safety clarity, no unfunded local burdens, and ULAP/LGU league participation in the IRR.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0037",
+      "ref": "PP-2026-0037",
+      "measure": "Proposed measures regarding Special Education Fund and Local School Boards",
+      "title": "Special Education Fund and Local School Boards Measures",
+      "area": "Education",
+      "sender": "House Committee on Local Government",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "position": "amend",
+      "summary": "Request for comments and position paper on SEF-related measures; source material provided through committee link.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support SEF/LSB reforms that strengthen accountability while preserving Local School Board authority, meaningful local SEF discretion, DepEd-LGU role clarity, and practical reporting.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0038",
+      "ref": "HB 8659",
+      "measure": "HB 8659 - Strengthened Shared Governance of Basic Education Act",
+      "title": "Strengthened Shared Governance of Basic Education Act",
+      "area": "Education",
+      "sender": "House Committee on Basic Education and Culture",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "position": "amend",
+      "summary": "Meeting invitation and request/intake item for basic education governance; submission-ready ULAP position paper now linked for Board/ED approval or post-hearing transmission.",
+      "requestedAction": "Attend hearing and submit statement",
+      "recommendation": "Support shared-governance objectives subject to clear DepEd/LGU roles, preservation of LSB and SEF mechanisms, funded local implementation, lawful data sharing, and ULAP/LGU league participation in the IRR.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0039",
+      "ref": "HB 3458",
+      "measure": "HBs 3458, 4420, 6464, 6889 - CLIMA Bill",
+      "title": "CLIMA Bill",
+      "area": "Disaster risk reduction and climate",
+      "sender": "House Committee on Climate Change",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Critical (same-day)",
+      "status": "For Approval",
+      "position": "amend",
+      "summary": "Second TWG invitation on CLIMA Bill; attendance confirmation requested and ULAP inputs may be needed for TWG discussion.",
+      "requestedAction": "Attend hearing and submit statement",
+      "recommendation": "Support the CLIMA Bill subject to mandate-based accountability, LGU financing and technical support, integrated reporting, local land-use safeguards, and priority support for vulnerable LGUs.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0040",
+      "ref": "PP-2026-0040",
+      "measure": "FSRCB draft Board Resolution on Administrative and Technical Secretariat designation",
+      "title": "FSRCB Draft Board Resolution on Administrative and Technical Secretariat Designation",
+      "area": "Health",
+      "sender": "DOH-FDA FSRCB Secretariat / ULAP National Secretariat",
+      "senderType": "National Government Agency",
+      "office": "Food Safety Regulation Coordinating Board",
+      "priority": "Medium (≤7 days)",
+      "status": "For Approval",
+      "position": "support",
+      "summary": "Request for comments on draft FSRCB resolution designating Secretariat personnel; comments due through attached Excel template.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "No objection to FSRCB Secretariat designation, subject to no implied new LGU mandates, a direct LGU coordination channel, timely dissemination of LGU-relevant issuances, and local implementation feedback.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0041",
+      "ref": "PP-2026-0041",
+      "measure": "Draft regulatory sandbox policy for FDA refilling guidelines / DOH AO 2024-0008",
+      "title": "Draft Regulatory Sandbox Policy for FDA Refilling Guidelines",
+      "area": "Environment and natural resources",
+      "sender": "Philippines NPAP / ULAP National Secretariat",
+      "senderType": "National Government Agency",
+      "office": "FDA / Philippines National Plastic Action Partnership",
+      "priority": "Routine (>7 days)",
+      "status": "For Approval",
+      "position": "amend",
+      "summary": "Request for comments on regulatory sandbox policy for refilling guidelines, including flexibilities, simplified procedures, anticipatory authorization, and DENR/EPR information-sharing.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support the refilling sandbox subject to clear LGU role, FDA lead technical regulation, no unfunded local inspection burdens, consumer safeguards, data/privacy/EPR alignment, and host-LGU pilot coordination.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0042",
+      "ref": "PP-2026-0042",
+      "measure": "2026 HLPF Local Authorities Major Group sectoral position paper and GTF statement",
+      "title": "2026 HLPF Local Authorities Major Group Sectoral Position Paper and GTF Statement",
+      "area": "Local governance",
+      "sender": "UCLG ASPAC / Local Authorities Major Group",
+      "senderType": "Other",
+      "office": "UCLG / LAMG / GTF",
+      "priority": "Routine (>7 days)",
+      "status": "For Leadership Decision",
+      "position": "support",
+      "summary": "Monitoring/reference item: circular shares international LRG position paper/statement under review, not a direct request for an ULAP position paper unless leadership elects to provide inputs.",
+      "requestedAction": "Other",
+      "recommendation": "Support Philippine LRG inputs to HLPF emphasizing local fiscal empowerment, archipelagic and climate-vulnerable LGUs, risk-informed planning, data capacity, multilevel governance, and LGU associations.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0016",
+      "ref": "HB 4789, HB 6163",
+      "measure": "HB 4789 and HB 6163 - eBotika Act",
+      "title": "eBotika Act",
+      "area": "Health / Trade / Online pharmacies",
+      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
+      "senderType": "House Committee",
+      "office": "House Committee on Trade and Industry",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "Meeting notice and attached bills on online pharmacies; orphaned draft from prior monitor preserved and imported.",
+      "requestedAction": "Draft position paper / resource input",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0017",
+      "ref": "PP-2026-0017",
+      "measure": "Revised Draft EO on streamlining CLUPs and physical framework plans",
+      "title": "Revised Draft EO on Streamlining CLUPs and Physical Framework Plans",
+      "area": "Land use / CLUP / Physical framework planning",
+      "sender": "ULAP Secretariat / DHSUD-ELUPDB",
+      "senderType": "National Agency",
+      "office": "DHSUD / National Land Use Committee",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "DHSUD transmitted revised draft EO incorporating NLUC TWG inputs and requested further comments for the next NLUC TWG.",
+      "requestedAction": "Further comments/recommendations",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0018",
+      "ref": "PP-2026-0018",
+      "measure": "PEAS bills and National Environmental Protection Agency / EMB strengthening bills",
+      "title": "PEAS Bills and National Environmental Protection Agency",
+      "area": "Environment / Environmental assessment / EMB",
+      "sender": "ULAP Secretariat / House Committee on Ecology",
+      "senderType": "House Committee",
+      "office": "House Committee on Ecology",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "Ecology Committee invited ULAP to 1 Jun 2026 meeting and requested position papers prior to meeting.",
+      "requestedAction": "Submit position paper prior to meeting",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0019",
+      "ref": "PP-2026-0019",
+      "measure": "Draft DPO creating NTWG on Healthy Workplaces",
+      "title": "Draft DPO Creating NTWG on Healthy Workplaces",
+      "area": "Health promotion / Healthy workplaces",
+      "sender": "ULAP Secretariat / DOH Health Promotion Bureau",
+      "senderType": "National Agency",
+      "office": "Department of Health",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "DOH requested comments on draft DPO and official representative designations; comments due May 29.",
+      "requestedAction": "Submit comments/proposed revisions",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0020",
+      "ref": "HB 9079 +4",
+      "measure": "HB 9079, HB 4702, HB 4773, HB 5944 - amendments to RA 8293 / IP Code",
+      "title": "Amendments to the Intellectual Property Code (RA 8293)",
+      "area": "Trade / Intellectual property",
+      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
+      "senderType": "House Committee",
+      "office": "House Committee on Trade and Industry",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "CTI invited ULAP to meeting on IP Code amendments involving sound/non-visible marks and IPOPHL strengthening bills.",
+      "requestedAction": "Submit views/comments/position paper",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0021",
+      "ref": "HB 5203, HB 673",
+      "measure": "HB 5203 Zero-Balance Billing; HBs 673, 2672, 3145, 3973, 4136, 5456, 5643, 7925, 8417 on EMS System",
+      "title": "Zero-Balance Billing & Emergency Medical Services",
+      "area": "Health / Hospital finance / Emergency medical services",
+      "sender": "ULAP Secretariat / House Committee on Health",
+      "senderType": "House Committee",
+      "office": "House Committee on Health",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "Health Committee invited ULAP as resource person for 1 Jun 2026 meeting and requested comments/recommendations one day before.",
+      "requestedAction": "Submit comments/recommendations at least one day before meeting",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0022",
+      "ref": "HB 847 +5",
+      "measure": "HB 847, HB 1318, HB 1721, HB 5810, HB 6822, HB 7220 - Corporate Social Responsibility Act",
+      "title": "Corporate Social Responsibility Act",
+      "area": "Trade / Corporate social responsibility / Local development",
+      "sender": "ULAP Secretariat / House Committee on Trade and Industry",
+      "senderType": "House Committee",
+      "office": "House Committee on Trade and Industry",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "CTI TWG invite expressly requested ULAP position paper for CSR bills before the 1 Jun 2026 TWG meeting.",
+      "requestedAction": "Submit position paper",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0023",
+      "ref": "HB 8466",
+      "measure": "HB 8466 - National Land Use Policy Act; CAR concerns and RDC-CAR resolutions",
+      "title": "National Land Use Policy Act",
+      "area": "Land use / National Land Use Policy / CAR concerns",
+      "sender": "ULAP Secretariat / DEPDev Regional Office CAR",
+      "senderType": "Regional Agency",
+      "office": "DEPDev Regional Office CAR / CAR RLUC",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "DEPDev CAR requested ULAP comments/suggestions on whether CAR concerns on HB 8466 should be retained, deferred, or revised.",
+      "requestedAction": "Submit comments and suggestions",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0024",
+      "ref": "HR 569",
+      "measure": "HR 569 - Disaster and Climate Emergency and urgent risk-informed governance",
+      "title": "Disaster and Climate Emergency and Urgent Risk-informed Governance",
+      "area": "Climate change / DRRM / Climate justice",
+      "sender": "ULAP Secretariat / House Committee on Climate Change",
+      "senderType": "House Committee",
+      "office": "House Committee on Climate Change",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "study",
+      "summary": "Committee requested ULAP position paper on HR 569 before its tentative May 2026 deliberation.",
+      "requestedAction": "Submit position paper",
+      "recommendation": "Recommended position to be finalized during internal review.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0025",
+      "ref": "PP-2026-0025",
+      "measure": "Proposed CLUP and ZO Implementation Monitoring Guidelines",
+      "title": "Proposed CLUP and ZO Implementation Monitoring Guidelines",
+      "area": "Land use planning / CLUP / Zoning / Local autonomy",
+      "sender": "ULAP Secretariat / DHSUD-ELUPDB",
+      "senderType": "National Agency / Internal Forward",
+      "office": "DHSUD-ELUPDB",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "amend",
+      "summary": "DHSUD-ELUPDB shared the CLUP and ZO evaluation, decision mapping, and project implementation monitoring tools for advance review and requested insights/feedback during the June 1 online consultation.",
+      "requestedAction": "Review consultation materials; prepare ULAP comments / position paper",
+      "recommendation": "Support CLUP-ZO monitoring with safeguards: advisory use, local autonomy, due process, phased rollout, data governance, and national technical/fiscal support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0026",
+      "ref": "PP-2026-0026",
+      "measure": "Draft Executive Order mandating GoodVibesTV as official government communications system",
+      "title": "Draft Executive Order Mandating GoodVibesTV as Official Government Communications System",
+      "area": "Digital governance / Government communications / LGU autonomy / Data privacy",
+      "sender": "ULAP Secretariat / Marlon Leodones",
+      "senderType": "Private Proponent / Internal Forward",
+      "office": "Private proponent / ULAP Secretariat",
+      "priority": "Medium (≤7 days)",
+      "status": "Draft Prepared",
+      "position": "oppose",
+      "summary": "Private proponent submitted GoodVibesTV platform proposal, ULAP endorsement request, program blueprint, financial model, and draft EO mandating adoption by all NGAs, LGUs, barangays, and GOCCs.",
+      "requestedAction": "Review proposal and draft EO; prepare ULAP position/comments on possible endorsement and TWG role",
+      "recommendation": "Do not endorse the draft EO as written; support only a platform-neutral, procurement-compliant, privacy/cybersecure, funded, phased, and consultative approach.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0027",
+      "ref": "EO 103, EO 138",
+      "measure": "Draft IRR of EO No. 103, s. 2025 amending EO No. 138, s. 2021",
+      "title": "Draft IRR of EO No. 103, s. 2025 Amending EO No. 138, s. 2021",
+      "area": "Devolution / Local autonomy / Fiscal decentralization",
+      "sender": "Union of Local Authorities of the Philippines / DBM ComDev Secretariat (forwarded)",
+      "senderType": "ULAP forward - DBM ComDev Secretariat",
+      "office": "ULAP Secretariat / DBM ComDev Secretariat",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "amend",
+      "summary": "DBM ComDev Secretariat requested availability for the 12th Committee of Devolution meeting to finalize the draft IRR of EO 103; ULAP needs preparatory position based on prior comments.",
+      "requestedAction": "Prepare/reaffirm ULAP position and comments for ComDev finalization meeting",
+      "recommendation": "Support finalization only with capacity-based safeguards, Annex A clarification, NGA-LGU sequencing, formal support instruments for fiscal gaps, and technical corrections.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0028",
+      "ref": "PP-2026-0028",
+      "measure": "Draft Memorandum: Guidelines on the Organization, Functions, and Operationalization of the Inspectorate Team for Ligtas Pinoy Centers (LPCs), Version 2",
+      "title": "Draft Memorandum: Guidelines on the Organization, Functions, and Operationalization of the Inspectorate Team for Ligtas Pinoy Centers (lpcs), Version 2",
+      "area": "Disaster resilience / Evacuation centers / Local infrastructure governance",
+      "sender": "ULAP Secretariat / OCD Project Management Office Ligtas Pinoy Act (forwarded)",
+      "senderType": "ULAP forward - OCD Ligtas Pinoy PMO",
+      "office": "ULAP Secretariat / Office of Civil Defense - Ligtas Pinoy PMO",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "amend",
+      "summary": "OCD Ligtas Pinoy PMO requested review/comments on the revised draft memorandum for organizing and operationalizing LPC Inspectorate Teams, with comments and forms due 03 June 2026; non-submission deemed concurrence.",
+      "requestedAction": "Review revised draft memorandum and prepare ULAP comments",
+      "recommendation": "Support issuance subject to clear role delineation, funded mandates, harmonized reporting, turnover safeguards, post-turnover support, data governance, and LGU consultation.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0029",
+      "ref": "HB 5099",
+      "measure": "House Bill No. 5099 - Public Solicitation Act of 2025",
+      "title": "Public Solicitation Act of 2025",
+      "area": "Social services / Public solicitations / Local governance",
+      "sender": "ULAP Secretariat / House Committee on Social Services (forwarded)",
+      "senderType": "Congress / House; internal forward",
+      "office": "House Committee on Social Services / ULAP Secretariat",
+      "priority": "Medium (≤7 days)",
+      "status": "Draft Prepared",
+      "position": "amend",
+      "summary": "House Committee on Social Services requested ULAP written position paper on HB 5099 regulating public solicitations, repealing Act No. 4075/PD 1564. Local issues: DSWD-LGU permit coordination, disaster-response fast lane, privacy safeguards, proportional requirements, and avoiding unfunded LGU enforcement burdens.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support with amendments: modernize solicitation regulation while preserving local permit/verification roles, disaster-response speed, privacy protections, proportional compliance, and funded implementation support for LGUs.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0030",
+      "ref": "HB 3405",
+      "measure": "Substitute Bill to House Bills Nos. 3405, 6881, 7834, and 8407 - Gender Responsive and Inclusive Pandemic, Emergency or Disaster Management Act",
+      "title": "Gender Responsive and Inclusive Pandemic, Emergency or Disaster Management Act",
+      "area": "Disaster risk reduction and climate / Gender and social protection / Local governance",
+      "sender": "ULAP Secretariat / House Committee on Appropriations (forwarded)",
+      "senderType": "Congress / House; internal forward",
+      "office": "House Committee on Appropriations / ULAP Secretariat",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "amend",
+      "summary": "House Committee on Appropriations referred the substitute bill and requested ULAP comments, recommendations, and position paper before committee action. Local issues: LGU implementation roles, local autonomy, GAD/LDRRM funding, reporting/data privacy, barangay/service-delivery capacity, and IRR consultation.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support with amendments: enact gender-responsive disaster/emergency protocols while preserving LGU autonomy, requiring national funding and technical assistance, phasing local implementation, protecting data privacy and survivor confidentiality, including ULAP/LGU leagues in the IRR, and calibrating penalties to culpable neglect.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0031",
+      "ref": "PP-2026-0031",
+      "measure": "ECOSOC and HLPF Review - retention of Local and Regional Governments Forum wording in operative paragraph 14",
+      "title": "ECOSOC & HLPF Review — LRG Forum Wording",
+      "area": "SDG localization / Multilevel governance / International advocacy",
+      "sender": "United Cities and Local Governments (UCLG)",
+      "senderType": "International counterpart / UN negotiations",
+      "office": "UCLG / Global Taskforce of Local and Regional Governments",
+      "priority": "High (≤3 days)",
+      "status": "Draft Prepared",
+      "position": "support",
+      "summary": "UCLG requested Presidency support for outreach to Ministries of Foreign Affairs and Permanent Missions to the UN to retain wording calling for an oral presentation on the Local and Regional Governments Forum to the HLPF. Issue is live UN negotiation text and official input/advocacy rather than a Philippine bill or executive order.",
+      "requestedAction": "Prepare official input / position paper",
+      "recommendation": "Support retention of operative paragraph 14 wording recognizing an oral presentation on the Local and Regional Governments Forum to the HLPF, while clarifying that local and regional governments are public authorities contributing implementation evidence and multilevel governance inputs without altering the UN intergovernmental character.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0001",
+      "ref": "HB 1613 +3",
+      "measure": "HB 1613, HB 6948, HB 7902, HB 8353 / National Coastal Greenbelt Program",
+      "title": "National Coastal Greenbelt Program",
+      "area": "Environment and natural resources",
+      "sender": "House Committee on Climate Change",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "House Committee on Climate Change requested ULAP's position paper on the proposed National Coastal Greenbelt Program and asked whether the measure should be harmonized with the Integrated Coastal Management framework; key LGU issues include land-use coordination, local autonomy, financing, and site-specific implementation.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support with safeguards; integrate with ICM and preserve LGU land-use authority, participation, and national funding support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0002",
+      "ref": "PP-2026-0002",
+      "measure": "Working Draft Bill on the Creation of the Department of Fisheries and Aquatic Resources",
+      "title": "Department of Fisheries and Aquatic Resources Bill",
+      "area": "Agriculture and food security",
+      "sender": "House Committee on Aquaculture and Fisheries Resources",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "House Committee on Aquaculture and Fisheries Resources requested comments on the DFAR working draft; the current draft strengthens national fisheries governance but includes provisions that may recentralize municipal waters regulation and require stronger LGU safeguards.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support in principle subject to fundamental amendments preserving LGU jurisdiction over municipal waters and providing national support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0003",
+      "ref": "RA 7916, RA 8748",
+      "measure": "Proposed Amendments to RA No. 7916, as amended by RA No. 8748",
+      "title": "Proposed Amendments to RA No. 7916, as Amended by RA No. 8748",
+      "area": "Local governance",
+      "sender": "PEZA Legal Affairs Group",
+      "senderType": "National Government Agency",
+      "office": "Philippine Economic Zone Authority",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "oppose",
+      "summary": "PEZA transmitted draft amendments to its charter and sought ULAP support; the proposed changes expand PEZA powers over ecozone designation, permitting, and utilities, with potential impacts on LGU land-use, regulatory, and fiscal authority.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Cannot support in present form; substantially revise to preserve LGU land-use, permitting, and fiscal authority while streamlining coordination.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0004",
+      "ref": "HB 8466, SB 152",
+      "measure": "House Bill No. 8466 and Senate Bill No. 152 / Proposed National Land Use Act",
+      "title": "Proposed National Land Use Act",
+      "area": "Local governance",
+      "sender": "Presidential Legislative Liaison Office",
+      "senderType": "National Government Agency",
+      "office": "Presidential Legislative Liaison Office",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "PLLO’s 05 May 2026 referral requested ULAP’s observations or recommendations on House Bill No. 8466 and Senate Bill No. 152 at the soonest possible time. Building on the earlier April NLUA intake, key LGU issues remain preservation of local planning and zoning authority, time-bound harmonization review, structured LGU consultation, and national technical and fiscal support.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support enactment with safeguards: preserve LGU authority over local land use and zoning, keep higher-level review harmonizing and time-bound, require LGU consultation, and pair new duties with national support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0005",
+      "ref": "EO 66",
+      "measure": "Draft amendment to EO No. 66, s. 2012 / Rules on the Cancellation or Suspension of Classes and Work in Government Offices Due to Typhoons, Flooding, and Other Natural or Human-Induced Hazards and Disasters",
+      "title": "Rules on the Cancellation or Suspension of Classes and Work in Government Offices Due to Typhoons, Flooding, and Other Natural or Human-induced Hazards and Disasters",
+      "area": "Education and disaster risk reduction",
+      "sender": "Office of the Secretary",
+      "senderType": "National Government Agency",
+      "office": "Department of Education",
+      "priority": "Urgent (≤2 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "DepEd requested ULAP's final comments on the proposed amendments to EO No. 66, s. 2012 and asked that submissions be made through the attached form by 22 April 2026. Key LGU issues include preserving self-executing local suspension authority, clarifying the heat-index trigger, ensuring direct advisory relay to LDRRMCs, and preventing unfunded ADM obligations.",
+      "requestedAction": "Prepare position paper / submit final comments",
+      "recommendation": "Support with substantial safeguards; preserve self-executing LGU suspension authority, require direct national-to-local advisory relay, clarify the heat-index trigger, and prevent unfunded ADM obligations.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0006",
+      "ref": "SB 1506, HB 6235",
+      "measure": "CADENA Act / Senate Bill No. 1506 / House Bill Nos. 6235, 6792, 6898, 6903, 7450, 7461, 7712",
+      "title": "CADENA Act",
+      "area": "Digital governance",
+      "sender": "ULAP Secretariat",
+      "senderType": "Other",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Routine (>7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "ULAP Secretariat circulated the draft ULAP position paper on the CADENA Act and requested approval, inputs, or comments from the NEB and member leagues. The draft generally supports transparency and accountability objectives, subject to interoperable digital systems, phased LGU compliance, standardized reporting templates, national funding support, and calibrated sanctions tied to actual local readiness.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with safeguards; require interoperable and funded national disclosure systems, phased LGU compliance, standardized templates, and calibrated sanctions tied to real local capacity and readiness.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0007",
+      "ref": "RA 11310",
+      "measure": "Proposed amendments to Republic Act No. 11310 / 4Ps Act Amendments",
+      "title": "Proposed Amendments to Republic Act No. 11310",
+      "area": "Social protection",
+      "sender": "ULAP Secretariat",
+      "senderType": "Other",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Routine (>7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "ULAP Secretariat circulated the draft ULAP position on proposed 4Ps Act amendments and requested approval, inputs, or comments from the NEB and member leagues. Key LGU issues include clear delineation of DSWD and LGU roles, validated local inputs into beneficiary records, due-process safeguards for suspension, delisting, and graduation, privacy-protected data-sharing, transition planning, and operational support for local participation.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with safeguards; clearly define LGU roles in beneficiary management and convergence, provide lawful data-sharing and due-process protections, link graduation to transition support, and avoid unfunded local mandates.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0008",
+      "ref": "PP-2026-0008",
+      "measure": "Proposed Performance Indicators for Sustainable Education / SGLG 2026-2028 indicator framework",
+      "title": "SGLG 2026-2028 Indicator Framework",
+      "area": "Education",
+      "sender": "Office of the Assistant Secretary for Operations",
+      "senderType": "National Government Agency",
+      "office": "Department of Education",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "DepEd requested comments and recommendations on the proposed SGLG Sustainable Education indicator framework. Key ULAP issues include keeping the framework fair to different LGU capacities, distinguishing LGU-attributable actions from broader education outcomes, and avoiding duplicative reporting burdens.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with safeguards; use outcome indicators contextually, profile new measures first, and avoid unfunded or duplicative reporting burdens on LGUs.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0009",
+      "ref": "HB 1110",
+      "measure": "Substitute Bill to House Bills 1110, 2373, 2852, 5790, 6067, 6129, 6145, 7811, and 8069 / Seal of Meritocracy and Good Local Governance Bill",
+      "title": "Seal of Meritocracy and Good Local Governance Bill",
+      "area": "Local governance",
+      "sender": "House Committee on Appropriations",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "The House Committee on Appropriations forwarded a referral letter and substitute bill on the proposed Seal of Meritocracy and Good Local Governance measure. Key ULAP issues include preserving local autonomy, recalibrating the data-collection burden, and clarifying incentives, disincentives, and intervention mechanisms.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support subject to substantial amendments preserving local autonomy, calibrating data burdens, and clarifying incentives, disincentives, and intervention mechanisms.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0010",
+      "ref": "SBN 21 +3",
+      "measure": "SBN 21, SBN 534, SBN 1918, and SRN 345 / Senate Health and Demography hearing on vape and heated tobacco regulation measures",
+      "title": "Vape and Heated Tobacco Regulation Measures",
+      "area": "Health",
+      "sender": "Senate Committee on Health and Demography",
+      "senderType": "Congress / Senate",
+      "office": "Senate of the Philippines",
+      "priority": "High (≤3 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "The Senate Committee on Health and Demography circulated hearing materials on pending vape and heated-tobacco measures. Key ULAP issues include stronger youth protection, a clear DOH/FDA-led regulatory framework, preservation of LGU authority to adopt stricter local safeguards, and avoidance of unfunded or unclear local enforcement burdens.",
+      "requestedAction": "Attend hearing and submit statement",
+      "recommendation": "Support stronger vape and heated-tobacco regulation with safeguards: keep regulation health-centered, preserve LGU authority to impose stricter local measures, and avoid unfunded or unclear local enforcement burdens.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0011",
+      "ref": "SB 156",
+      "measure": "Proposed Right to Information Act / Senate Bill Nos. 156, 1625, 1648 and related House measures",
+      "title": "PEAS Bills and EMB Strengthening",
+      "area": "Digital governance",
+      "sender": "ULAP Secretariat",
+      "senderType": "ULAP Secretariat - approval/input circulation",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "ULAP circulated a draft position paper supporting a Right to Information law with safeguards on privacy, exceptions, records management, and realistic LGU implementation capacity. Key ULAP issues include workable local compliance, clear exceptions, and national support for records and digital systems.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with safeguards: broaden public access while protecting privacy, clarifying exceptions, and ensuring realistic, funded LGU implementation.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0012",
+      "ref": "SB 1457, RA 11524",
+      "measure": "Coconut Farmers Trust Fund Amendments / Senate Bill No. 1457 and related measures amending Republic Act No. 11524",
+      "title": "Coconut Farmers Trust Fund Amendments",
+      "area": "Agriculture and food security",
+      "sender": "ULAP Secretariat",
+      "senderType": "ULAP Secretariat - approval/input circulation",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "ULAP circulated a draft position supporting amendments to the Coconut Farmers Trust Fund framework. Key ULAP issues include structured LGU participation, joint registry validation, convergence with local agriculture investments, and funded local delivery support.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support amendments that strengthen farmer participation and local delivery, subject to clear LGU roles, better registry validation, and funded implementation support.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0013",
+      "ref": "RA 11037",
+      "measure": "Masustansyang Pagkain Act Amendments / Senate and House measures expanding Republic Act No. 11037",
+      "title": "Masustansyang Pagkain Act Amendments",
+      "area": "Social protection",
+      "sender": "ULAP Secretariat",
+      "senderType": "ULAP Secretariat - approval/input circulation",
+      "office": "Union of Local Authorities of the Philippines",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "support",
+      "summary": "ULAP circulated a draft position supporting stronger school-based feeding and nutrition support. Key ULAP issues include national financing, clear agency accountability, safe local procurement, food safety, and avoiding unfunded implementation burdens on LGUs.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support stronger school feeding and nutrition programs with national financing, clear accountability, safe local procurement, and no unfunded LGU burdens.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0014",
+      "ref": "HB 2374",
+      "measure": "PTCA substitute bill and House Bills 2374, 3137, 5935, and 6510 / Welfare of Children regular meeting",
+      "title": "PTCA Bill and Welfare of Children Measures",
+      "area": "Education",
+      "sender": "House Committee on Welfare of Children",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "The House Committee on Welfare of Children invited ULAP to its 11 May 2026 regular meeting and requested ULAP’s position, comments, and suggestions, with a position paper due on or before 11 May 2026, on the PTCA substitute bill and the pending Magna Carta of Children measures.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support the PTCA substitute bill and the broader child-welfare objectives of the MCC measures, subject to safeguards preserving school-governance clarity, no compulsory PTCA burdens, clear LGU and child-protection roles, and funded implementation.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0015",
+      "ref": "HB 1901, HB 2412",
+      "measure": "House Bill No. 1901 and House Bill No. 2412 / Water service cooperatives and local cooperatives development funds",
+      "title": "Water Service Cooperatives and Local Cooperatives Development Funds",
+      "area": "Local governance",
+      "sender": "House Committee on Cooperatives Development",
+      "senderType": "Congress / House",
+      "office": "House of Representatives",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "The House Committee on Cooperatives Development requested ULAP’s comments or recommendations on House Bill No. 1901 and House Bill No. 2412, with submission requested on or before 11 May 2026. Key LGU issues include local fiscal autonomy, fund earmarks, local planning discretion, and interaction with existing service arrangements.",
+      "requestedAction": "Prepare position paper",
+      "recommendation": "Support cooperative and water-access objectives only with major amendments preserving local fiscal autonomy, avoiding rigid earmarks, and respecting existing service arrangements.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0032",
+      "ref": "PP-2026-0032",
+      "measure": "Draft UCLG ASPAC Position Paper for the UCLG World Congress 2026 - Asia-Pacific Assembly Track",
+      "title": "Draft UCLG ASPAC Position Paper for the UCLG World Congress 2026",
+      "area": "Local governance",
+      "sender": "Union of Local Authorities of the Philippines / UCLG ASPAC Secretariat (forwarded)",
+      "senderType": "ULAP Secretariat - UCLG ASPAC feedback request",
+      "office": "ULAP Secretariat / UCLG ASPAC",
+      "priority": "High (≤3 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "UCLG ASPAC requested member feedback/comments on the draft Asia-Pacific Assembly Track Position Paper for the UCLG World Congress 2026, including regional priorities on local autonomy, fiscal empowerment, climate resilience, digital governance, infrastructure, city diplomacy, and election arrangements.",
+      "requestedAction": "Provide LGU inputs",
+      "recommendation": "Support with refinements: endorse UCLG ASPAC's localization, fiscal empowerment, climate resilience, digital governance, infrastructure, social inclusion, and city diplomacy messages while strengthening local-autonomy safeguards, Philippine archipelagic/coastal priorities, implementation finance, data governance, and transparent regional election arrangements.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0033",
+      "ref": "PP-2026-0033",
+      "measure": "DILG LGC RevAmP consolidated reform proposals / Copy of Consolidation of Proposed Amendments to the LGC",
+      "title": "DILG LGC RevAmP Consolidated Reform Proposals",
+      "area": "Local governance",
+      "sender": "DILG BLGD-LDPD / ULAP Secretariat forward",
+      "senderType": "National Government Agency",
+      "office": "Department of the Interior and Local Government - Bureau of Local Government Development",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "study",
+      "summary": "DILG BLGD requested LGU Pillar endorsement of consolidated LGC RevAmP reform proposals. Accessible source matrix includes planning professionalization, barangay digital services, DRRM staffing, HR/PS-cap, fiscal, environmental, and service-delivery proposals. ULAP issue is to support LGC reform subject to LGU validation, local autonomy, fiscal-impact review, phased implementation, and no unfunded mandates.",
+      "requestedAction": "Endorse / coordinate with leagues",
+      "recommendation": "Conditional endorsement for further structured vetting, subject to LGU validation, fiscal-impact review, protection of local autonomy, phased implementation, and avoidance of unfunded mandates.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    },
+    {
+      "id": "pp-2026-0034",
+      "ref": "HB 7707",
+      "measure": "HB 7707 - Local Tax and Fee Exemption for Micro Enterprises Act",
+      "title": "Local Tax and Fee Exemption for Micro Enterprises Act",
+      "area": "Fiscal decentralization",
+      "sender": "House Committee on Micro, Small and Medium Enterprise Development / ULAP Secretariat forward",
+      "senderType": "Congress / House",
+      "office": "House of Representatives - Committee on Micro, Small and Medium Enterprise Development",
+      "priority": "Medium (≤7 days)",
+      "status": "For Internal Review",
+      "position": "amend",
+      "summary": "House MSME Committee requested comments/recommendations on HB 7707. The bill exempts micro enterprises from local business taxes, business permit/license fees, and local regulatory fees and charges. ULAP issue is to support microenterprise formalization while revising blanket exemptions to preserve LGU fiscal autonomy, cost recovery, regulatory capacity, and LGU participation in the IRR.",
+      "requestedAction": "Comment / annotate draft bill",
+      "recommendation": "Support objective but recommend substantial amendments to protect LGU fiscal autonomy, preserve regulatory cost recovery, require fiscal safeguards, and include ULAP/LGU leagues in IRR development.",
+      "received": "2026-04-16T09:00:00+08:00",
+      "deadline": "2026-07-13T17:00:00+08:00",
+      "signoffs": [],
+      "notes": [],
+      "docs": []
+    }
+  ];
+
+  // ---------- state / persistence ----------
+  var KEY = "ulap_neb_portal_v4";
+  var state = load();
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (raw) { var p = JSON.parse(raw); if (p && p.papers) return normalize(p); }
+    } catch (e) {}
+    return normalize({ papers: JSON.parse(JSON.stringify(SEED)), role: "neb", me: "", required: DEFAULT_REQUIRED });
+  }
+  function normalize(st) {
+    if (typeof st.required !== "number") st.required = DEFAULT_REQUIRED;
+    if (typeof st.me !== "string") st.me = "";
+    (st.papers || []).forEach(function (p) {
+      if (!Array.isArray(p.signoffs)) p.signoffs = [];
+      if (!Array.isArray(p.notes)) p.notes = [];
+      if (!Array.isArray(p.docs)) p.docs = [];
+    });
+    return st;
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function paper(id) { return state.papers.filter(function (p) { return p.id === id; })[0]; }
+  function myName() { return (state.me || "").trim(); }
+
+  // ---------- derived ----------
+  function tally(p) {
+    var a = 0, d = 0;
+    (p.signoffs || []).forEach(function (s) { if (s.decision === "approve") a++; else if (s.decision === "disapprove") d++; });
+    return { a: a, d: d, total: a + d };
+  }
+  function mySignoff(p) {
+    var me = myName().toLowerCase();
+    if (!me) return null;
+    var m = (p.signoffs || []).filter(function (s) { return String(s.name || "").trim().toLowerCase() === me; });
+    return m.length ? m[m.length - 1] : null;
+  }
+  function effectiveStatus(p) {
+    if (p.status === "Submitted") return "Submitted";
+    if (tally(p).a >= state.required) return "Approved";
+    return p.status; // For Internal Review / For Approval / Returned
+  }
+  var STATUS_BADGE = {
+    "Draft Prepared": ["b-draft", "Draft Prepared"],
+    "For Internal Review": ["b-review", "For Internal Review"],
+    "For Leadership Decision": ["b-leadership", "For Leadership Decision"],
+    "For Approval": ["b-approval", "For Approval"],
+    "Approved": ["b-approved", "Approved by NEB"],
+    "Returned": ["b-returned", "Returned for Revision"],
+    "Submitted": ["b-submitted", "Submitted"]
+  };
+  function statusBadge(es) { return STATUS_BADGE[es] || ["b-review", es]; }
+  var POS = {
+    support: ["pos-support", "Support"],
+    amend: ["pos-amend", "Support w/ amendments"],
+    oppose: ["pos-oppose", "Oppose"],
+    study: ["pos-study", "For further study"]
+  };
+
+  // ---------- icons ----------
+  var IC = {
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.6 5.4L19 10l-5.4 1.6L12 17l-1.6-5.4L5 10l5.4-1.6z"/><path d="M19 4v3M5 17v3M20 19h-3"/></svg>',
+    doc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/></svg>'
+  };
+
+  // ===================================================================
+  //  RENDER: dashboard
+  // ===================================================================
+  var portal = $("#portal");
+
+  var PRIORITY_ORDER = ["Critical", "Urgent", "High", "Medium", "Routine"];
+  function priorityMeta(p) {
+    var name = String(p.priority || "").split(" (")[0].trim() || "Medium";
+    var map = { Critical: "pr-crit", Urgent: "pr-urg", High: "pr-high", Medium: "pr-med", Routine: "pr-rout" };
+    var rank = PRIORITY_ORDER.indexOf(name);
+    return { name: name, cls: map[name] || "pr-med", rank: rank < 0 ? 3 : rank };
+  }
+
+  function renderStats() {
+    var ps = state.papers;
+    var total = ps.length;
+    var forApproval = ps.filter(function (p) { return effectiveStatus(p) === "For Approval"; }).length;
+    var approved = ps.filter(function (p) { return effectiveStatus(p) === "Approved"; }).length;
+    var signoffs = ps.reduce(function (n, p) { return n + (p.signoffs ? p.signoffs.length : 0); }, 0);
+
+    var cards = [
+      { cls: "act", k: "For NEB Approval", v: forApproval, d: "Currently before the board" },
+      { cls: "good", k: "Approved by NEB", v: approved, d: "Reached " + state.required + " sign-off" + (state.required === 1 ? "" : "s") },
+      { cls: "", k: "Sign-offs recorded", v: signoffs, d: "Across all papers" },
+      { cls: "", k: "Total Papers", v: total, d: "In the approval registry" }
+    ];
+    $("#statBand").innerHTML = cards.map(function (c, i) {
+      return '<div class="stat ' + c.cls + '" style="animation-delay:' + (i * 45) + 'ms">'
+        + '<div class="k">' + c.k + '</div><div class="v">' + c.v + '</div><div class="d">' + c.d + '</div></div>';
+    }).join("");
+  }
+
+  function policyAreas() {
+    var set = {}; state.papers.forEach(function (p) { set[p.area] = 1; });
+    return Object.keys(set).sort();
+  }
+
+  function renderFilters() {
+    var cur = $("#fArea").value;
+    $("#fArea").innerHTML = '<option value="">All policy areas</option>' + policyAreas().map(function (a) {
+      return '<option value="' + esc(a) + '"' + (a === cur ? " selected" : "") + '>' + esc(a) + "</option>";
+    }).join("");
+  }
+
+  function cardMiniRoll(p) {
+    var t = tally(p);
+    if (!t.total) return '<div class="mini-roll"><span class="mini-none">No sign-offs yet — be the first to review</span></div>';
+    var approvers = (p.signoffs || []).filter(function (s) { return s.decision === "approve"; });
+    var avs = approvers.slice(0, 6).map(function (s) { return '<span class="mini-av" title="' + esc(s.name) + '">' + esc(initials(s.name)) + '</span>'; }).join("");
+    var more = approvers.length > 6 ? '<span class="mini-more">+' + (approvers.length - 6) + '</span>' : "";
+    return '<div class="mini-roll"><div class="mini-avs">' + avs + more + '</div>'
+      + '<div class="mini-count"><b>' + t.a + '</b> approved' + (t.d ? ' &middot; ' + t.d + ' against' : '') + '</div></div>';
+  }
+
+  function renderDocket() {
+    var q = ($("#searchBox").value || "").toLowerCase().trim();
+    var fs = $("#fStatus").value, fa = $("#fArea").value, sort = $("#fSort").value;
+    var list = state.papers.filter(function (p) {
+      var es = effectiveStatus(p);
+      if (fs && es !== fs) return false;
+      if (fa && p.area !== fa) return false;
+      if (q) {
+        var hay = (p.title + " " + p.ref + " " + p.area + " " + p.sender + " " + p.summary).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+
+    list.sort(function (a, b) {
+      if (sort === "progress") return tally(b).a - tally(a).a;
+      if (sort === "priority") return priorityMeta(a).rank - priorityMeta(b).rank;
+      // default "approval": papers you haven't signed yet first, then by priority
+      var av = effectiveStatus(a) === "For Approval" && !mySignoff(a) ? 0 : 1;
+      var bv = effectiveStatus(b) === "For Approval" && !mySignoff(b) ? 0 : 1;
+      if (av !== bv) return av - bv;
+      return priorityMeta(a).rank - priorityMeta(b).rank;
+    });
+
+    if (!list.length) {
+      $("#docket").innerHTML = '<div class="empty" style="grid-column:1/-1"><div style="font-family:var(--display);font-size:18px;color:var(--navy-ink);margin-bottom:4px">No matching papers</div><div>Adjust your search or filters to see the docket.</div></div>';
+      return;
+    }
+
+    $("#docket").innerHTML = list.map(function (p, i) {
+      var es = effectiveStatus(p);
+      var sb = statusBadge(es);
+      var pos = POS[p.position];
+      var pr = priorityMeta(p);
+      var t = tally(p);
+      var mine = mySignoff(p);
+      return '<article class="paper-card" data-id="' + p.id + '" style="animation-delay:' + (i * 40) + 'ms" tabindex="0" role="button" aria-label="Open ' + esc(p.title) + '">'
+        + '<div class="pc-top"><span class="pc-ref">' + esc(p.ref) + '</span>'
+        + '<span class="badge ' + sb[0] + '"><span class="bd"></span>' + sb[1] + '</span></div>'
+        + '<div class="pc-body">'
+        +   '<div class="pc-title">' + esc(p.title) + '</div>'
+        +   '<div class="pc-meta"><span>' + esc(p.area) + '</span><span class="dot"></span><span>' + esc(shortSender(p.sender)) + '</span>'
+        +     '<span class="dot"></span><span class="pos-tag ' + pos[0] + '">' + pos[1] + '</span></div>'
+        +   cardMiniRoll(p)
+        + '</div>'
+        + '<div class="pc-foot">'
+        +   '<span class="pr-chip ' + pr.cls + '"><span class="pd"></span>' + esc(pr.name) + ' priority</span>'
+        +   (es === "Approved"
+              ? '<span style="font-size:11.5px;font-weight:700;color:var(--good)">Endorsed by NEB</span>'
+              : mine
+              ? '<span style="font-size:11.5px;font-weight:700;color:' + (mine.decision === "approve" ? "var(--good)" : "var(--bad)") + '">You: ' + (mine.decision === "approve" ? "Approved" : "Disapproved") + '</span>'
+              : (es === "For Approval" && state.role === "neb")
+              ? '<span style="font-size:11.5px;font-weight:700;color:var(--gold-deep)">Review &amp; sign &rsaquo;</span>'
+              : '<span style="font-size:11.5px;color:var(--muted)">' + t.a + ' of ' + state.required + ' approvals</span>')
+        + '</div>'
+        + '</article>';
+    }).join("");
+
+    $$(".paper-card").forEach(function (el) {
+      el.addEventListener("click", function () { openRoom(el.getAttribute("data-id")); });
+      el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openRoom(el.getAttribute("data-id")); } });
+    });
+  }
+  function shortSender(s) { return s.replace("Committee on", "Cmte. on"); }
+
+  // ===================================================================
+  //  RENDER: reading room
+  // ===================================================================
+  var currentId = null, currentTab = "draft";
+
+  function openRoom(id) {
+    currentId = id; currentTab = "draft";
+    var p = paper(id);
+    $("#rmRef").textContent = p.ref;
+    $("#rmTitle").textContent = p.title;
+    $("#rmMeta").innerHTML =
+      '<span>' + esc(p.area) + '</span>'
+      + '<span>Proponent: <b>' + esc(p.sender) + '</b></span>'
+      + '<span>Priority: <b>' + esc(priorityMeta(p).name) + '</b></span>'
+      + '<span>Submit to: <b>' + esc(p.office) + '</b></span>';
+    setTab("draft");
+    renderRoom();
+    $("#scrim").classList.add("show");
+    $("#room").classList.add("show");
+    $("#room").setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+  function closeRoom() {
+    $("#scrim").classList.remove("show");
+    $("#room").classList.remove("show");
+    $("#room").setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+    currentId = null;
+    renderStats(); renderDocket();
+  }
+
+  function renderRoom() {
+    var p = paper(currentId);
+    renderDraft(p); renderRail(p);
+    $("#tcNotes").textContent = p.notes.length;
+    $("#tcDocs").textContent = p.docs.length;
+    if (currentTab === "qi") renderQi(p);
+    if (currentTab === "notes") renderNotes(p);
+    if (currentTab === "docs") renderDocs(p);
+  }
+
+  function setTab(t) {
+    currentTab = t;
+    $$(".tab").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === t); });
+    $$(".tabpane").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-pane") === t); });
+    var p = paper(currentId);
+    if (t === "qi") renderQi(p);
+    if (t === "notes") renderNotes(p);
+    if (t === "docs") renderDocs(p);
+  }
+
+  function renderDraft(p) {
+    var pos = POS[p.position];
+    var hl = '<div class="hl-grid">'
+      + hlItem("ULAP Position", '<span class="pos-tag ' + pos[0] + '">' + pos[1] + '</span>')
+      + hlItem("Priority", '<span class="pr-chip ' + priorityMeta(p).cls + '"><span class="pd"></span>' + esc(priorityMeta(p).name) + '</span>')
+      + hlItem("Policy Area", esc(p.area))
+      + hlItem("Submit To", esc(p.office))
+      + hlItemFull("At a glance", esc(p.summary))
+      + '</div>';
+
+    var n = 0;
+    function sec(title, html) { if (!html) return ""; n++; return '<h3>' + roman(n) + '. ' + title + '</h3>' + html; }
+    function para(x) { return x ? '<p>' + esc(x) + '</p>' : ""; }
+    function list(arr) { return (arr && arr.length) ? '<ul>' + arr.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ul>' : ""; }
+
+    var sections = ""
+      + sec("Requested Action", para(p.requestedAction))
+      + sec("Issue Summary", para(p.summary))
+      + sec("Background", para(p.background))
+      + sec("Key Provisions of the Measure", list(p.keyProvisions))
+      + sec("ULAP's Recommended Position", para(p.recommendation || p.rationale))
+      + sec("Impact on Local Government Units", para(p.lguImpact))
+      + sec("Fiscal Implications", para(p.fiscalImpact))
+      + sec("Amendments / Safeguards Sought", list(p.amendments));
+
+    var uploadNote = (p.docs && p.docs.length)
+      ? '<div class="draft-note">The full drafted position paper is attached under the <b>Documents</b> tab.</div>'
+      : '<div class="draft-note">This record captures the request and ULAP\'s recommended position. The full drafted position paper will be attached under the <b>Documents</b> tab by the Secretariat.</div>';
+
+    var body = '<div class="draft-doc">'
+      + '<div class="doc-crest"><div class="org">UNION OF LOCAL AUTHORITIES OF THE PHILIPPINES</div><div class="kind">Position Paper Record — for NEB Approval</div></div>'
+      + '<h2>' + esc(p.title) + '</h2>'
+      + '<p class="lead">' + esc(p.measure || p.ref) + '<br><span class="lead-sub">Requesting office: ' + esc(p.sender) + '</span></p>'
+      + sections
+      + uploadNote
+      + '</div>';
+    $("#paneDraft").innerHTML = hl + body;
+  }
+  function roman(n) { return ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"][n - 1] || String(n); }
+  function hlItem(k, v) { return '<div class="hl-item"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>'; }
+  function hlItemFull(k, v) { return '<div class="hl-item full"><div class="k">' + k + '</div><div class="v" style="font-weight:400;line-height:1.6">' + v + '</div></div>'; }
+
+  // ---------- Q&I assistant ----------
+  var qiHistory = {};
+  function renderQi(p) {
+    if (!qiHistory[p.id]) qiHistory[p.id] = [];
+    var suggestions = ["What is ULAP's recommended position?", "Summarize this measure", "Who requested this?", "What safeguards is ULAP seeking?", "Which board members have signed off?", "Which office does this go to?"];
+    var thread = qiHistory[p.id].map(function (m) {
+      if (m.role === "you") return '<div class="qi-msg you"><div class="bub">' + esc(m.text) + '</div><div class="av">' + initials(myName() || "You") + '</div></div>';
+      return '<div class="qi-msg ai"><div class="av">' + IC.spark + '</div><div class="bub">' + m.text + (m.src ? '<span class="src">' + m.src + '</span>' : "") + '</div></div>';
+    }).join("");
+
+    $("#paneQi").innerHTML =
+      '<div class="qi-intro"><div class="qi-orb">' + IC.spark + '</div><div><h4>Q&amp;I Assistant</h4>'
+      + '<p>Ask anything about ' + esc(p.ref) + '. Answers are grounded in this record — the issue summary, ULAP\'s recommended position, the requesting and submitting offices, and the board roll call.</p></div></div>'
+      + '<div class="qi-chips">' + suggestions.map(function (s) { return '<button class="qi-chip" data-q="' + esc(s) + '">' + esc(s) + '</button>'; }).join("") + '</div>'
+      + '<div class="qi-thread" id="qiThread">' + thread + '</div>'
+      + '<form class="qi-form" id="qiForm"><input id="qiInput" placeholder="Ask about the bill or ULAP\'s position…" autocomplete="off"><button type="submit" class="btn primary">Ask</button></form>';
+
+    $$("#paneQi .qi-chip").forEach(function (c) { c.addEventListener("click", function () { askQi(p, c.getAttribute("data-q")); }); });
+    $("#qiForm").addEventListener("submit", function (e) { e.preventDefault(); var v = $("#qiInput").value.trim(); if (v) askQi(p, v); });
+  }
+  function initials(s) { var m = s.replace(/[^A-Za-z ]/g, "").trim().split(/\s+/); return ((m[0] || "N")[0] + (m[1] || m[0] || "E")[0]).toUpperCase(); }
+
+  function askQi(p, q) {
+    qiHistory[p.id].push({ role: "you", text: q });
+    renderQi(p);
+    var thread = $("#qiThread");
+    var typing = document.createElement("div");
+    typing.className = "qi-msg ai";
+    typing.innerHTML = '<div class="av">' + IC.spark + '</div><div class="bub"><div class="typing"><i></i><i></i><i></i></div></div>';
+    thread.appendChild(typing);
+    thread.scrollTop = thread.scrollHeight;
+    setTimeout(function () {
+      var ans = answerQi(p, q);
+      qiHistory[p.id].push({ role: "ai", text: ans.text, src: ans.src });
+      renderQi(p);
+      var t2 = $("#qiThread"); if (t2) t2.scrollTop = t2.scrollHeight;
+    }, 620 + Math.min(900, q.length * 12));
+  }
+
+  function answerQi(p, q) {
+    var s = q.toLowerCase();
+    var pos = POS[p.position][1];
+    function has() { for (var i = 0; i < arguments.length; i++) if (s.indexOf(arguments[i]) !== -1) return true; return false; }
+    var src = 'From the record for ' + esc(p.ref) + ' — ' + esc(p.title);
+    var rec = p.recommendation || p.rationale || "";
+    var notInRecord = 'This record captures the request and ULAP\'s recommended position; the detailed analysis is in the full drafted paper (see the Documents tab).';
+
+    if (has("vote", "voted", "approv", "disapprov", "how many", "majority", "counter", "tally", "roll call", "who has", "which board", "who on the board", "signed", "sign off")) {
+      var tt = tally(p);
+      var approvers = (p.signoffs || []).filter(function (x) { return x.decision === "approve"; });
+      var disapprovers = (p.signoffs || []).filter(function (x) { return x.decision === "disapprove"; });
+      function nm(x) { return esc(x.name) + (x.title ? ' <span style="color:var(--muted)">— ' + esc(x.title) + '</span>' : ''); }
+      var body = '<strong>' + tt.a + '</strong> board member' + (tt.a === 1 ? " has" : "s have") + ' signed off to approve ' + esc(p.ref) + '. <strong>' + state.required + '</strong> approval' + (state.required === 1 ? "" : "s") + ' are needed to endorse' + (tt.a >= state.required ? ' — <strong>reached</strong>.' : '; ' + (state.required - tt.a) + ' more to go.');
+      if (approvers.length) body += '<br><br><strong>Approved by:</strong><ul>' + approvers.map(function (x) { return '<li>' + nm(x) + '</li>'; }).join("") + '</ul>';
+      if (disapprovers.length) body += '<strong>Disapproved by:</strong><ul>' + disapprovers.map(function (x) { return '<li>' + nm(x) + '</li>'; }).join("") + '</ul>';
+      if (!approvers.length && !disapprovers.length) body += '<br><br>No one has signed off yet — the roll call is empty.';
+      return { text: body, src: 'Live sign-off roll call' };
+    }
+    if (has("position", "stand", "recommend", "support", "oppose", "favor", "for or against", "endorse", "why", "rationale")) {
+      return { text: 'ULAP\'s recommended position on this measure is <strong>' + pos + '</strong>.' + (rec ? '<br><br>' + esc(rec) : ''), src: src };
+    }
+    if (has("amend", "safeguard", "condition", "change", "revision")) {
+      if (p.amendments && p.amendments.length) return { text: 'ULAP is seeking these amendments / safeguards:<ul>' + p.amendments.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ul>', src: src };
+      return { text: 'The specific amendments and safeguards are set out in ULAP\'s recommended position:<br><br>' + esc(rec || pos), src: src };
+    }
+    if (has("lgu", "local government", "affect", "impact on", "cities", "municipal", "province", "barangay", "who is affected")) {
+      return { text: p.lguImpact ? '<strong>Impact on LGUs.</strong><br>' + esc(p.lguImpact) : (notInRecord + '<br><br>ULAP\'s recommended position: <strong>' + pos + '</strong>' + (rec ? ' — ' + esc(rec) : '')), src: src };
+    }
+    if (has("fiscal", "cost", "budget", "funding", "money", "revenue", "financ", "how much")) {
+      return { text: p.fiscalImpact ? '<strong>Fiscal implications.</strong><br>' + esc(p.fiscalImpact) : notInRecord, src: src };
+    }
+    if (has("provision", "salient", "key point", "what does the bill", "contain", "key feature", "main point")) {
+      return { text: (p.keyProvisions && p.keyProvisions.length) ? '<strong>Key provisions:</strong><ul>' + p.keyProvisions.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ul>' : ('<strong>What this is about.</strong><br>' + esc(p.summary)), src: src };
+    }
+    if (has("background", "context", "history", "origin")) {
+      return { text: p.background ? esc(p.background) : ('<strong>What this is about.</strong><br>' + esc(p.summary)), src: src };
+    }
+    if (has("deadline", "when", "due", "submit", "office", "transmit", "where does this go", "relevant office")) {
+      return { text: 'Once approved by the NEB, ULAP\'s position on ' + esc(p.ref) + ' goes to: <strong>' + esc(p.office) + '</strong>.<br><br>This is a <strong>' + esc(priorityMeta(p).name) + '</strong>-priority measure.', src: src };
+    }
+    if (has("proponent", "author", "requested", "filed", "sponsor", "who is behind", "who filed", "where did this come", "who sent")) {
+      return { text: 'This came from <strong>' + esc(p.sender) + '</strong> (' + esc(p.senderType) + '). The requested action was: ' + esc(p.requestedAction || "prepare a position paper") + '.', src: src };
+    }
+    if (has("summary", "summarize", "about", "what is", "gist", "tldr", "explain", "plain", "overview", "brief")) {
+      return { text: esc(p.summary) + '<br><br><strong>ULAP\'s recommended position:</strong> ' + pos + (rec ? ' — ' + esc(rec) : '') + '.', src: src };
+    }
+
+    // keyword fallback over available fields
+    var corpus = [p.summary, p.background, rec, p.lguImpact, p.fiscalImpact, p.requestedAction].concat(p.keyProvisions || [], p.amendments || []).filter(Boolean);
+    var words = s.replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(function (w) { return w.length > 3; });
+    var best = null, bestScore = 0;
+    corpus.forEach(function (sent) {
+      var low = String(sent).toLowerCase(), sc = 0;
+      words.forEach(function (w) { if (low.indexOf(w) !== -1) sc++; });
+      if (sc > bestScore) { bestScore = sc; best = sent; }
+    });
+    if (best && bestScore > 0) {
+      return { text: 'Here is the most relevant passage:<br><br>“' + esc(best) + '”<br><br>You can also ask about ULAP\'s <em>recommended position</em>, the <em>issue summary</em>, the <em>submitting office</em>, or <em>which board members have signed off</em>.', src: src };
+    }
+    return { text: 'I can answer from this record. Try asking about ULAP\'s <strong>recommended position</strong>, the <strong>issue summary</strong>, the <strong>requesting office</strong>, the <strong>submitting office</strong>, or <strong>which board members have signed off</strong>.', src: 'Q&I Assistant' };
+  }
+
+  // ---------- revision notes ----------
+  var noteType = "revision";
+  function renderNotes(p) {
+    var list = p.notes.length ? p.notes.map(function (n, idx) {
+      var tag = { revision: ["nt-revision", "Revision"], query: ["nt-query", "Query"], endorse: ["nt-endorse", "Endorsement"] }[n.type] || ["nt-query", "Note"];
+      return '<div class="note ' + (n.resolved ? "resolved" : "") + '">'
+        + '<div class="nh"><div class="who">' + esc(n.who) + ' <span>· ' + (n.role === "Secretariat" ? "ULAP Secretariat" : "NEB") + '</span></div>'
+        + '<div style="display:flex;align-items:center;gap:8px"><span class="note-tag ' + tag[0] + '">' + tag[1] + '</span><span class="when">' + timeAgo(n.when) + '</span></div></div>'
+        + '<div class="body">' + esc(n.text) + '</div>'
+        + (state.role === "secretariat" && !n.resolved ? '<div style="margin-top:8px"><button class="btn sm ghost" data-resolve="' + idx + '">Mark addressed</button></div>' : "")
+        + '</div>';
+    }).join("") : '<div class="empty" style="padding:30px 10px"><div style="font-size:13.5px">No revision notes yet. NEB members can leave notes for the Secretariat here.</div></div>';
+
+    $("#paneNotes").innerHTML = list
+      + '<div class="note-compose">'
+      + '<textarea id="noteText" placeholder="Leave a revision note, a question, or an endorsement for the Secretariat…"></textarea>'
+      + '<div class="nc-foot"><div class="seg" id="noteSeg">'
+      +   '<button data-t="revision" class="' + (noteType === "revision" ? "on" : "") + '">Revision request</button>'
+      +   '<button data-t="query" class="' + (noteType === "query" ? "on" : "") + '">Query</button>'
+      +   '<button data-t="endorse" class="' + (noteType === "endorse" ? "on" : "") + '">Endorsement</button>'
+      + '</div><button class="btn primary sm" id="addNote">Post note</button></div></div>';
+
+    $$("#noteSeg button").forEach(function (b) { b.addEventListener("click", function () { noteType = b.getAttribute("data-t"); renderNotes(p); }); });
+    $("#addNote").addEventListener("click", function () {
+      var t = $("#noteText").value.trim(); if (!t) return;
+      p.notes.push({ who: myName() || (state.role === "secretariat" ? "ULAP Secretariat" : "NEB Member"), role: state.role === "secretariat" ? "Secretariat" : "NEB", type: noteType, when: new Date(now()).toISOString(), text: t, resolved: false });
+      save(); renderNotes(p); renderRoom(); toast("Note posted to the Secretariat", "good");
+    });
+    $$("#paneNotes [data-resolve]").forEach(function (b) { b.addEventListener("click", function () { p.notes[+b.getAttribute("data-resolve")].resolved = true; save(); renderNotes(p); }); });
+  }
+
+  // ---------- documents ----------
+  function renderDocs(p) {
+    var files = p.docs.map(function (f, idx) {
+      return '<div class="file-row"><div class="file-ic"><span class="ext">' + esc(f.ext || "FILE") + '</span></div>'
+        + '<div class="fn"><b>' + esc(f.name) + '</b><small>' + fmtSize(f.size) + (f.by ? ' · uploaded by ' + esc(f.by) : '') + '</small></div>'
+        + (f.data ? '<a class="btn sm ghost" href="' + f.data + '" download="' + esc(f.name) + '">Download</a>' : '<span class="btn sm ghost" style="opacity:.5;cursor:default">On file</span>')
+        + '</div>';
+    }).join("");
+
+    $("#paneDocs").innerHTML =
+      (p.docs.length ? files : '<div class="empty" style="padding:24px 10px"><div style="font-size:13.5px">No supporting documents attached yet.</div></div>')
+      + '<div class="doc-drop" id="roomDrop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4m0 0L8 8m4-4l4 4"/><path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>'
+      + '<p>Attach a supporting document</p><small>Proponents and the Secretariat may upload PDF, DOCX, or XLSX files</small>'
+      + '<input type="file" id="roomFiles" multiple style="display:none"></div>';
+
+    var drop = $("#roomDrop"), inp = $("#roomFiles");
+    drop.addEventListener("click", function () { inp.click(); });
+    ["dragover", "dragenter"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("hot"); }); });
+    ["dragleave", "drop"].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("hot"); }); });
+    drop.addEventListener("drop", function (e) { handleFiles(p, e.dataTransfer.files); });
+    inp.addEventListener("change", function () { handleFiles(p, inp.files); });
+  }
+  function handleFiles(p, fileList) {
+    var arr = Array.prototype.slice.call(fileList);
+    var pending = arr.length;
+    if (!pending) return;
+    arr.forEach(function (f) {
+      var ext = (f.name.split(".").pop() || "FILE").toUpperCase().slice(0, 4);
+      var rec = { name: f.name, size: f.size, ext: ext, by: myName() || (state.role === "secretariat" ? "ULAP Secretariat" : "NEB Member") };
+      if (f.size < 700000) {
+        var r = new FileReader();
+        r.onload = function () { rec.data = r.result; done(); };
+        r.onerror = done; r.readAsDataURL(f);
+      } else { done(); }
+      function done() { p.docs.push(rec); if (--pending === 0) { save(); renderDocs(p); renderRoom(); toast(arr.length + " document(s) attached", "good"); } }
+    });
+  }
+
+  // ---------- right rail: approval console ----------
+  function renderRail(p) {
+    var t = tally(p);
+    var es = effectiveStatus(p);
+    var required = state.required;
+    var pct = Math.min(100, Math.round((t.a / Math.max(1, required)) * 100));
+    var met = t.a >= required;
+    var mine = mySignoff(p);
+
+    var rollList = (p.signoffs || []).length
+      ? p.signoffs.map(function (s, idx) {
+          var ok = s.decision === "approve";
+          var sig = s.sig ? '<img class="rc-sig" src="' + s.sig + '" alt="signature of ' + esc(s.name) + '">' : '';
+          var canRemove = state.role === "secretariat" || (myName() && String(s.name).trim().toLowerCase() === myName().toLowerCase());
+          return '<div class="rc-row">'
+            + '<div class="rc-person"><span class="rc-name">' + esc(s.name) + '</span>'
+            + (s.title ? '<span class="rc-title">' + esc(s.title) + '</span>' : '')
+            + '<span class="rc-time">signed ' + timeAgo(s.when) + '</span></div>'
+            + '<div class="rc-right">' + sig
+            + '<span class="rc-status ' + (ok ? "rc-approve" : "rc-disapprove") + '">' + (ok ? IC.check + "Approved" : IC.x + "Disapproved") + '</span>'
+            + (canRemove ? '<button class="rc-del" data-del="' + idx + '" aria-label="Remove sign-off">&times;</button>' : '')
+            + '</div></div>';
+        }).join("")
+      : '<div class="rc-empty">No sign-offs yet. When a board member approves, they enter their name and sign here — on their phone or computer.</div>';
+
+    var voteBox;
+    if (state.role === "neb") {
+      voteBox = '<div class="vote-actions">'
+        + '<button class="vote-btn approve' + (mine && mine.decision === "approve" ? " on" : "") + '" data-sign="approve">' + IC.check + (mine && mine.decision === "approve" ? "You approved" : "Approve &amp; sign") + '</button>'
+        + '<button class="vote-btn disapprove' + (mine && mine.decision === "disapprove" ? " on" : "") + '" data-sign="disapprove">' + IC.x + (mine && mine.decision === "disapprove" ? "You disapproved" : "Disapprove") + '</button>'
+        + '</div>'
+        + (mine
+            ? '<div class="your-vote">You signed as <b>' + esc(mine.name) + '</b>' + (mine.sig ? ' with a signature' : '') + '. <button class="linkbtn" id="withdrawSign">Withdraw</button></div>'
+            : '<div class="your-vote">Record your decision — you\'ll enter your name and can sign with your finger or mouse.</div>');
+    } else {
+      voteBox = '<div class="your-vote" style="margin-top:0">Secretariat view — set how many approvals are needed, respond to notes, and mark it submitted. Switch to <b>NEB Member</b> to sign off.</div>'
+        + (es === "Approved" ? '<button class="btn gold sm" id="markSubmitted" style="width:100%;justify-content:center;margin-top:10px">Mark submitted to office</button>' : '');
+    }
+
+    var requiredCtl = state.role === "secretariat"
+      ? '<span class="req-ctl">Approvals required: <button class="req-step" data-req="-1" aria-label="fewer">&minus;</button><b>' + required + '</b><button class="req-step" data-req="1" aria-label="more">+</button></span>'
+      : '<span class="req-ctl">Needs <b>' + required + '</b> approval' + (required === 1 ? "" : "s") + ' to endorse</span>';
+
+    $("#railPad").innerHTML =
+      '<div class="console"><div class="console-head"><div class="t">Approval counter</div><div class="st">' + statusLabel(es) + '</div></div>'
+      + '<div class="console-body">'
+      +   '<div class="roll-top"><div class="big"><b>' + t.a + '</b> / ' + required + '</div><div class="need">' + (met ? "endorsed" : (required - t.a) + " more to endorse") + '</div></div>'
+      +   '<div class="roll-bar"><div class="fa" style="width:' + pct + '%"></div></div>'
+      +   '<div class="thresh-note ' + (met ? "met" : "") + '">' + (met ? IC.check : "") + requiredCtl + (t.d ? ' &middot; ' + t.d + ' against' : '') + '</div>'
+      +   voteBox
+      + '</div></div>'
+
+      + '<div class="console"><div class="console-head"><div class="t">Who has signed off</div><div class="st" style="font-size:12.5px;font-weight:600">' + t.a + ' approved' + (t.d ? ' &middot; ' + t.d + ' disapproved' : '') + '</div></div>'
+      +   '<div class="rc-list">' + rollList + '</div>'
+      + '</div>'
+
+      + '<div class="rail-mini"><div class="t">Paper details</div>'
+      +   kv("Status", statusLabel(es)) + kv("ULAP position", POS[p.position][1]) + kv("Priority", priorityMeta(p).name)
+      +   kv("Submit to", p.office) + kv("Reference", p.ref)
+      + '</div>';
+
+    $$("#railPad [data-sign]").forEach(function (b) { b.addEventListener("click", function () { openSignoff(p, b.getAttribute("data-sign")); }); });
+    $$("#railPad [data-del]").forEach(function (b) { b.addEventListener("click", function () { p.signoffs.splice(+b.getAttribute("data-del"), 1); save(); renderRoom(); renderStats(); renderDocket(); toast("Sign-off removed"); }); });
+    $$("#railPad [data-req]").forEach(function (b) { b.addEventListener("click", function () { state.required = Math.max(1, state.required + (+b.getAttribute("data-req"))); save(); renderRoom(); renderStats(); renderDocket(); }); });
+    var wd = $("#withdrawSign"); if (wd) wd.addEventListener("click", function () {
+      var lc = myName().toLowerCase();
+      p.signoffs = p.signoffs.filter(function (s) { return String(s.name).trim().toLowerCase() !== lc; });
+      save(); renderRoom(); renderStats(); renderDocket(); toast("Your sign-off was withdrawn");
+    });
+    var ms = $("#markSubmitted"); if (ms) ms.addEventListener("click", function () { p.status = "Submitted"; save(); renderRoom(); renderStats(); toast("Marked as submitted to " + p.office, "good"); });
+  }
+  function kv(k, v) { return '<div class="kv"><span class="k">' + esc(k) + '</span><span class="v">' + esc(v) + '</span></div>'; }
+  function statusLabel(es) { return statusBadge(es)[1]; }
+
+  // ---------- sign-off modal + signature pad ----------
+  var signCtx = { paper: null, decision: "approve", drew: false };
+  var padCanvas = null, padCtx = null, padDrawing = false, padLast = null;
+
+  function fillRosterSelect() {
+    var sel = $("#soRoster"); if (!sel || sel.options.length) return;
+    sel.innerHTML = '<option value="">— Select from the board, or type your name below —</option>'
+      + ROSTER.map(function (m, i) { return '<option value="' + i + '">' + esc(m.name) + " · " + esc(m.title) + "</option>"; }).join("");
+  }
+  function openSignoff(p, decision) {
+    signCtx.paper = p; signCtx.decision = decision;
+    var existing = mySignoff(p);
+    fillRosterSelect();
+    $("#soRef").textContent = p.ref + " — " + p.title;
+    var nm = existing ? existing.name : myName();
+    $("#soName").value = nm;
+    $("#soRole").value = existing && existing.title ? existing.title : "";
+    // preselect roster row if the name matches
+    var idx = ROSTER.map(function (m) { return m.name.toLowerCase(); }).indexOf((nm || "").toLowerCase());
+    $("#soRoster").value = idx >= 0 ? String(idx) : "";
+    if (idx >= 0 && !$("#soRole").value) $("#soRole").value = ROSTER[idx].title;
+    $("#soType").checked = false;
+    $("#soPadWrap").style.display = "";
+    setSignDecision(decision);
+    $("#soScrim").classList.add("show");
+    preparePad();
+    setTimeout(function () { $("#soName").focus(); }, 60);
+  }
+  function setSignDecision(d) {
+    signCtx.decision = d;
+    $$("#soDecision [data-d]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-d") === d); });
+    var btn = $("#soConfirm");
+    btn.textContent = d === "approve" ? "Confirm approval" : "Confirm disapproval";
+    btn.className = "btn " + (d === "approve" ? "goodbtn" : "badbtn");
+  }
+  function closeSignoff() { $("#soScrim").classList.remove("show"); signCtx.paper = null; }
+
+  function preparePad() {
+    padCanvas = $("#soPad"); if (!padCanvas) return;
+    padCtx = padCanvas.getContext("2d");
+    var w = padCanvas.clientWidth || 380;
+    padCanvas.width = Math.round(w * 2); padCanvas.height = 260;
+    padCtx.lineWidth = 3; padCtx.lineCap = "round"; padCtx.lineJoin = "round"; padCtx.strokeStyle = "#0C1E3E";
+    signCtx.drew = false;
+    var h = $("#soPadHint"); if (h) h.style.display = "";
+  }
+  function clearPad() { if (padCanvas && padCtx) padCtx.clearRect(0, 0, padCanvas.width, padCanvas.height); signCtx.drew = false; var h = $("#soPadHint"); if (h) h.style.display = ""; }
+  function padPos(e) {
+    var r = padCanvas.getBoundingClientRect(); var pt = e.touches && e.touches[0] ? e.touches[0] : e;
+    return { x: (pt.clientX - r.left) * (padCanvas.width / r.width), y: (pt.clientY - r.top) * (padCanvas.height / r.height) };
+  }
+  function padStart(e) { if (!padCtx) return; e.preventDefault(); padDrawing = true; padLast = padPos(e); signCtx.drew = true; var h = $("#soPadHint"); if (h) h.style.display = "none"; }
+  function padMove(e) { if (!padDrawing) return; e.preventDefault(); var q = padPos(e); padCtx.beginPath(); padCtx.moveTo(padLast.x, padLast.y); padCtx.lineTo(q.x, q.y); padCtx.stroke(); padLast = q; }
+  function padEnd() { padDrawing = false; }
+
+  function typedSignature(name) {
+    var c = document.createElement("canvas"); c.width = 640; c.height = 170;
+    var x = c.getContext("2d"); x.fillStyle = "#0C1E3E";
+    x.font = "italic 56px 'Snell Roundhand','Segoe Script','Bradley Hand','Brush Script MT',cursive";
+    x.textBaseline = "middle"; x.fillText(name, 18, 95);
+    return c.toDataURL("image/png");
+  }
+
+  function confirmSignoff() {
+    var p = signCtx.paper; if (!p) return;
+    var name = $("#soName").value.trim();
+    if (!name) { $("#soName").focus(); toast("Please enter your name to sign off"); return; }
+    var title = $("#soRole").value.trim();
+    var sig = null;
+    if ($("#soType").checked) sig = typedSignature(name);
+    else if (signCtx.drew && padCanvas) sig = padCanvas.toDataURL("image/png");
+    var lc = name.toLowerCase();
+    p.signoffs = (p.signoffs || []).filter(function (s) { return String(s.name).trim().toLowerCase() !== lc; });
+    var prev = effectiveStatus(p);
+    p.signoffs.push({ name: name, title: title, decision: signCtx.decision, sig: sig, when: new Date(now()).toISOString() });
+    state.me = name;
+    save();
+    var after = effectiveStatus(p);
+    var wasApprove = signCtx.decision === "approve";
+    closeSignoff(); renderRoom(); renderStats(); renderDocket(); renderWhoami();
+    toast(wasApprove ? "Approved — your sign-off is recorded" : "Disapproval recorded", wasApprove ? "good" : "");
+    if (prev !== "Approved" && after === "Approved") setTimeout(function () { toast("Required approvals reached — endorsed by the NEB", "good"); }, 750);
+  }
+
+  // ===================================================================
+  //  formatting helpers
+  // ===================================================================
+  function fmtDate(x) { var d = new Date(x); return d.toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" }); }
+  function fmtSize(b) { if (!b) return "—"; if (b < 1024) return b + " B"; if (b < 1048576) return Math.round(b / 1024) + " KB"; return (b / 1048576).toFixed(1) + " MB"; }
+  function timeAgo(x) {
+    var ms = now() - new Date(x).getTime(); var m = Math.floor(ms / 6e4), h = Math.floor(m / 60), d = Math.floor(h / 24);
+    if (m < 1) return "just now"; if (m < 60) return m + "m ago"; if (h < 24) return h + "h ago"; if (d < 30) return d + "d ago"; return fmtDate(x);
+  }
+
+  // ===================================================================
+  //  role + seat controls
+  // ===================================================================
+  function renderWhoami() {
+    var el = $("#whoami"); if (!el) return;
+    var n = myName();
+    el.innerHTML = n
+      ? '<span class="pen">&#9998;</span>' + esc(n)
+      : '<span class="lbl">Set your name</span>';
+    el.style.display = state.role === "neb" ? "" : "none";
+  }
+  function promptName() {
+    var n = window.prompt("Enter the name you sign off with (this is the name shown on your approvals):", myName());
+    if (n != null) { state.me = n.trim(); save(); renderWhoami(); renderStats(); renderDocket(); if (currentId) renderRoom(); }
+  }
+  function applyRole() {
+    portal.setAttribute("data-role", state.role);
+    $("#roleNeb").classList.toggle("on", state.role === "neb");
+    $("#roleSec").classList.toggle("on", state.role === "secretariat");
+    $("#submitBtn").style.display = state.role === "secretariat" ? "inline-flex" : "none";
+    renderWhoami();
+    $("#viewTitle").textContent = state.role === "secretariat" ? "Position Paper Registry — Secretariat" : "Position Papers for NEB Approval";
+    $("#viewSub").textContent = state.role === "secretariat"
+      ? "Submit new papers to the board, attach supporting documents, respond to revision notes, and set how many approvals each measure needs."
+      : "Review the draft, ask the Q&I assistant, leave revision notes, and sign off. Each member records their approval with their name and signature.";
+  }
+  function setRole(r) { state.role = r; save(); applyRole(); renderStats(); renderDocket(); if (currentId) renderRoom(); }
+
+  $("#roleNeb").addEventListener("click", function () { setRole("neb"); });
+  $("#roleSec").addEventListener("click", function () { setRole("secretariat"); });
+  $("#whoami").addEventListener("click", promptName);
+
+  // ===================================================================
+  //  submit modal
+  // ===================================================================
+  var pendingFiles = [];
+  function openModal() {
+    pendingFiles = [];
+    ["mTitle", "mRef", "mSender", "mOffice", "mSummary", "mDraft"].forEach(function (id) { $("#" + id).value = ""; });
+    $("#mDropList").textContent = "PDF, DOCX, XLSX — optional";
+    $("#modalScrim").classList.add("show");
+  }
+  function closeModal() { $("#modalScrim").classList.remove("show"); }
+  $("#submitBtn").addEventListener("click", openModal);
+  $("#closeModal").addEventListener("click", closeModal);
+  $("#cancelModal").addEventListener("click", closeModal);
+  $("#modalScrim").addEventListener("click", function (e) { if (e.target === $("#modalScrim")) closeModal(); });
+  $("#mDrop").addEventListener("click", function () { $("#mFiles").click(); });
+  $("#mFiles").addEventListener("change", function () {
+    pendingFiles = Array.prototype.slice.call(this.files);
+    $("#mDropList").textContent = pendingFiles.length ? pendingFiles.map(function (f) { return f.name; }).join(", ") : "PDF, DOCX, XLSX — optional";
+  });
+
+  $("#saveModal").addEventListener("click", function () {
+    var title = $("#mTitle").value.trim();
+    if (!title) { $("#mTitle").focus(); toast("Please enter the title of the measure"); return; }
+    var id = "pp-" + Math.abs(hash(title + now())).toString(36).slice(0, 7);
+    var np = {
+      id: id, ref: $("#mRef").value.trim() || "—", title: title, area: $("#mArea").value,
+      sender: $("#mSender").value.trim() || "—", senderType: "Congress / House Committee",
+      office: $("#mOffice").value.trim() || "Relevant office", priority: $("#mPriority").value,
+      received: new Date(now()).toISOString(), deadline: iso(daysFromNow(7)),
+      position: $("#mPos").value, status: "For Approval",
+      summary: $("#mSummary").value.trim() || "(High-level summary to be added.)",
+      keyProvisions: parseLines($("#mDraft").value, "provision"),
+      rationale: extractSection($("#mDraft").value) || "(Rationale to be added by the Secretariat.)",
+      lguImpact: "(LGU impact to be detailed.)", fiscalImpact: "(Fiscal implications to be detailed.)",
+      amendments: [], recommendation: "For the NEB's approval as ULAP's official position.",
+      background: $("#mDraft").value.trim() || "(Background to be added.)",
+      votes: {}, notes: [], docs: []
+    };
+    var pending = pendingFiles.length;
+    function finish() {
+      state.papers.unshift(np); save(); closeModal(); renderStats(); renderFilters(); renderDocket();
+      toast("Position paper submitted to the NEB", "good");
+      setTimeout(function () { openRoom(id); }, 300);
+    }
+    if (!pending) return finish();
+    pendingFiles.forEach(function (f) {
+      var ext = (f.name.split(".").pop() || "FILE").toUpperCase().slice(0, 4);
+      var rec = { name: f.name, size: f.size, ext: ext, by: "ULAP Secretariat" };
+      if (f.size < 700000) { var r = new FileReader(); r.onload = function () { rec.data = r.result; np.docs.push(rec); if (--pending === 0) finish(); }; r.onerror = function () { np.docs.push(rec); if (--pending === 0) finish(); }; r.readAsDataURL(f); }
+      else { np.docs.push(rec); if (--pending === 0) finish(); }
+    });
+  });
+  function parseLines(txt, kind) { var l = (txt || "").split("\n").map(function (x) { return x.replace(/^[-•\d.\s]+/, "").trim(); }).filter(function (x) { return x.length > 12; }); return l.slice(0, 4).length ? l.slice(0, 4) : ["(Key provisions to be summarized from the draft.)"]; }
+  function extractSection(txt) { var p = (txt || "").split("\n\n"); return p.length ? p[0].trim() : ""; }
+  function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; } return h; }
+
+  // ===================================================================
+  //  toasts, tabs, close, live clock
+  // ===================================================================
+  function toast(msg, kind) {
+    var t = document.createElement("div");
+    t.className = "toast " + (kind || "");
+    t.innerHTML = (kind === "good" ? IC.check : IC.spark) + "<span>" + esc(msg) + "</span>";
+    $("#toastWrap").appendChild(t);
+    setTimeout(function () { t.style.transition = "opacity .3s, transform .3s"; t.style.opacity = "0"; t.style.transform = "translateY(10px)"; setTimeout(function () { t.remove(); }, 320); }, 2600);
+  }
+
+  $$(".tab").forEach(function (b) { b.addEventListener("click", function () { setTab(b.getAttribute("data-tab")); }); });
+  $("#closeRoom").addEventListener("click", closeRoom);
+  $("#scrim").addEventListener("click", closeRoom);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { if ($("#soScrim").classList.contains("show")) closeSignoff(); else if ($("#modalScrim").classList.contains("show")) closeModal(); else if (currentId) closeRoom(); } });
+
+  ["searchBox", "fStatus", "fArea", "fSort"].forEach(function (id) { $("#" + id).addEventListener("input", renderDocket); $("#" + id).addEventListener("change", renderDocket); });
+
+  // sign-off modal wiring
+  $("#soConfirm").addEventListener("click", confirmSignoff);
+  $("#soCancel").addEventListener("click", closeSignoff);
+  $("#soClose").addEventListener("click", closeSignoff);
+  $("#soScrim").addEventListener("click", function (e) { if (e.target === $("#soScrim")) closeSignoff(); });
+  $("#soClear").addEventListener("click", clearPad);
+  $$("#soDecision [data-d]").forEach(function (b) { b.addEventListener("click", function () { setSignDecision(b.getAttribute("data-d")); }); });
+  $("#soType").addEventListener("change", function () { $("#soPadWrap").style.display = this.checked ? "none" : ""; });
+  $("#soRoster").addEventListener("change", function () {
+    var i = this.value; if (i === "") return;
+    var m = ROSTER[+i]; if (m) { $("#soName").value = m.name; $("#soRole").value = m.title; }
+  });
+  (function () {
+    var pad = $("#soPad");
+    ["mousedown", "touchstart"].forEach(function (ev) { pad.addEventListener(ev, padStart, { passive: false }); });
+    ["mousemove", "touchmove"].forEach(function (ev) { pad.addEventListener(ev, padMove, { passive: false }); });
+    ["mouseup", "mouseleave", "touchend", "touchcancel"].forEach(function (ev) { pad.addEventListener(ev, padEnd); });
+  })();
+
+  // ===================================================================
+  //  boot
+  // ===================================================================
+  applyRole(); renderStats(); renderFilters(); renderDocket();
+
+})();
+</script>
+
+</body>
+</html>
